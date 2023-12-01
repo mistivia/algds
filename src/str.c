@@ -66,6 +66,7 @@ void destroy_str_list(char **list) {
 }
 
 char *str_strip(char *str) {
+    if (str == NULL) return NULL;
     int len = strlen(str);
     char *begin = str;
     char *end = str + len - 1;
