@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Arcane Lactiflora <arcanelactiflora@outlook.com>. All Rights Reserved.
+// Copyright (C) 2023 Mistivia <mistivia@soverin.net>. All Rights Reserved.
 // Licensed under GPLv3. See LICENSE for details..
 
 #include "mmhash.h"

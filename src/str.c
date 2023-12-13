@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Arcane Lactiflora <arcanelactiflora@outlook.com>
+// Copyright (C) 2023 Mistivia <mistivia@soverin.net>
 // Licensed under GPLv3. See LICENSE for details.
 
 #include "str.h"

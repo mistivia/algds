@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Arcane Lactiflora <arcanelactiflora@outlook.com>
+// Copyright (C) 2023 Mistivia <mistivia@soverin.net>
 // Licensed under GPLv3. See LICENSE for details.
 
 /*
@@ -25,6 +25,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#ifndef RB_TREE_H_
+#define RB_TREE_H_
 
 #include <stdlib.h>
 
@@ -59,3 +62,6 @@ void *rb_tree_right(void *node);
 void *rb_tree_parent(void *node);
 
 void destroy_rb_tree(rb_tree_t *, void (*freeCb)(void *));
+
+#endif
+
