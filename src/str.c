@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Mistivia <mistivia@soverin.net>
+// Copyright (C) 2023 Mistivia <i@mistivia.com>
 // Licensed under GPLv3. See LICENSE for details.
 
 #include "str.h"
