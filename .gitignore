@@ -1,0 +1,7 @@
+/test_*
+*.o
+*.d
+build/
+*.bin
+*.a
+doing/
