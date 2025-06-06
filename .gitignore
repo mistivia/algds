@@ -5,3 +5,5 @@ build/
 *.bin
 *.a
 doing/
+.cache/
+compile_commands.json

@@ -61,24 +61,31 @@ void test_str_strip() {
 
     s = str_strip("hello ");
     assert(strcmp(s, "hello") == 0);
+    free(s);
 
     s = str_strip("hello");
     assert(strcmp(s, "hello") == 0);
+    free(s);
 
     s = str_strip("\nhello ");
     assert(strcmp(s, "hello") == 0);
+    free(s);
 
     s = str_strip("\nhello");
     assert(strcmp(s, "hello") == 0);
+    free(s);
 
     s = str_strip("");
     assert(strcmp(s, "") == 0);
+    free(s);
 
     s = str_strip("\n\t ");
     assert(strcmp(s, "") == 0);
+    free(s);
 
     s = str_strip(" ");
     assert(strcmp(s, "") == 0);
+    free(s);
 }
 
 void test_str_bulider() {

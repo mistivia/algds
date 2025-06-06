@@ -66,6 +66,7 @@ int main() {
     for (int i = 0; i < 10000; i++) {
         assert(found[i]);
     }
+    destroy_hash_table(&ht);
 
     printf("[PASS] htable\n");
 }

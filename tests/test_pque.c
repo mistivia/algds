@@ -35,6 +35,7 @@ int main() {
         int *top = priority_queue_top(&pq);
         assert(*top == expected[i]);
     }
+    free(pq.buf);
     printf("[PASS] pque\n");
     return 0;
 }

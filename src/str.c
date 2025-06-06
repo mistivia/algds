@@ -65,12 +65,17 @@ void destroy_str_list(char **list) {
 char *str_strip(char *str) {
     if (str == NULL) return NULL;
     int len = strlen(str);
+    if (len == 0) {
+        char* ret = malloc(1);
+        ret[0] = '\0';
+        return ret;
+    }
     char *begin = str;
     char *end = str + len - 1;
     while (isspace(*begin) && begin < end) {
         begin++;
     }
-    while (isspace(*end) && end >= begin) {
+    while (end >= begin && isspace(*end)) {
         end--;
     }
     len = end - begin + 1;

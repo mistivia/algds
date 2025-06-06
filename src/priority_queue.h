@@ -14,6 +14,6 @@ void init_priority_queue(priority_queue_t *pq, int cap, int elemsz,
                          int (*cmp)(void *, void *));
 void priority_queue_push(priority_queue_t *pq, void *elem);
 void priority_queue_pop(priority_queue_t *pq);
-void *priority_queue_top();
+void *priority_queue_top(priority_queue_t *pq);
 
 #endif

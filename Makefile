@@ -1,4 +1,8 @@
 cc = gcc
+cflags = \
+	-g \
+	-fsanitize=address
+
 src = $(shell ls src/*.c)
 obj = $(src:.c=.o)
 
@@ -21,10 +25,10 @@ test: $(tests_bin)
 	@scripts/runall.sh $^
 
 $(obj):%.o:%.c
-	$(cc) -c -g $< -MD -MF $@.d -o $@
+	$(cc) -c $(cflags) $< -MD -MF $@.d -o $@
 
 $(tests_bin):%.bin:%.c libalgds.a
-	$(cc) -g -Isrc/ $< libalgds.a -MD -MF $@.d -o $@
+	$(cc) $(cflags) -Isrc/ $< libalgds.a -MD -MF $@.d -o $@
 
 clean:
 	-rm $(shell find tests/ -name '*.bin')

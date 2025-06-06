@@ -7,9 +7,6 @@
 #define HTFL_VAL 1
 #define HTFL_DEL 2
 
-static void *hash_table_end(hash_table_t *ht) {
-    return ht->buf + ht->cap * (ht->elemsz + 1);
-}
 
 static void rebuild(hash_table_t *ht) {
     hash_table_t newht;
@@ -20,22 +17,20 @@ static void rebuild(hash_table_t *ht) {
         iter = hash_table_next(ht, iter);
     }
     free(ht->buf);
+    free(ht->flagbuf);
     *ht = newht;
 }
-
-static uint8_t getflag(void *iter) { return *(uint8_t *)(iter - 1); }
-
-static void setflag(void *iter, uint8_t flag) { *(uint8_t *)(iter - 1) = flag; }
 
 void init_hash_table(hash_table_t *ht, int64_t elemsz, int64_t cap,
                      uint64_t (*hash)(void *), bool (*eq)(void *, void *)) {
     if (cap < 16) cap = 16;
-    ht->buf = malloc(cap * (elemsz + 1));
-    memset(ht->buf, 0, cap * (elemsz + 1));
+    ht->buf = malloc(cap * elemsz);
+    ht->flagbuf = malloc(cap);
+    memset(ht->buf, 0, cap * elemsz);
+    memset(ht->flagbuf, 0, cap);
     ht->size = 0;
     ht->cap = cap;
     ht->taken = 0;
-    ht->begin = NULL;
     ht->elemsz = elemsz;
     ht->hash = hash;
     ht->eq = eq;
@@ -47,53 +42,69 @@ bool hash_table_insert(hash_table_t *ht, void *elem) {
     }
     ht->taken++;
     ht->size++;
-    int64_t hashcode = ht->hash(elem) % ht->cap;
-    void *pos = ht->buf + hashcode * (ht->elemsz + 1) + 1;
-    while (getflag(pos) != HTFL_NUL) {
-        if (getflag(pos) == HTFL_VAL && ht->eq(pos, elem)) return false;
-        pos += ht->elemsz + 1;
-        if (pos >= hash_table_end(ht)) { // arrived end, restart from beginning
-            pos = ht->buf + 1;
+    int64_t pos = ht->hash(elem) % ht->cap;
+    while (ht->flagbuf[pos] != HTFL_NUL) {
+        if (ht->flagbuf[pos] == HTFL_VAL
+                && ht->eq(ht->buf + pos * ht->elemsz, elem)) {
+            return false;
+        }
+        pos++; 
+        if (pos >= ht->cap) { // arrived end, restart from beginning
+            pos = 0;
         }
     }
-    memcpy(pos, elem, ht->elemsz);
-    setflag(pos, HTFL_VAL);
-    if (pos < ht->begin || ht->begin == NULL) {
-        ht->begin = pos;
-    }
+    memcpy(ht->buf + pos * ht->elemsz, elem, ht->elemsz);
+    ht->flagbuf[pos] = HTFL_VAL;
     return true;
 }
 
-void hash_table_remove(hash_table_t *ht, void *iter) {
+void hash_table_remove(hash_table_t *ht, void * ptr) {
     ht->size--;
-    setflag(iter, HTFL_DEL);
-    if (iter == ht->begin) {
-        ht->begin = hash_table_next(ht, iter);
-    }
+    int64_t pos = (ptr - ht->buf) / ht->elemsz;
+    ht->flagbuf[pos] = HTFL_DEL;
+}
+
+void *hash_table_ref(hash_table_t *ht, int64_t pos) {
+    return ht->buf + pos * ht->elemsz;
 }
 
 void *hash_table_find(hash_table_t *ht, void *elem) {
-    int64_t hashcode = ht->hash(elem) % ht->cap;
-    void *pos = ht->buf + hashcode * (ht->elemsz + 1) + 1;
-    while (getflag(pos) != HTFL_NUL) {
-        if (getflag(pos) == HTFL_VAL && ht->eq(pos, elem)) return pos;
-        pos += ht->elemsz + 1;
-        if (pos >= hash_table_end(ht)) { // arrived end, restart from beginning
-            pos = ht->buf + 1;
+    int64_t pos = ht->hash(elem) % ht->cap;
+    while (ht->flagbuf[pos] != HTFL_NUL) {
+        if (ht->flagbuf[pos] == HTFL_VAL
+                && ht->eq(hash_table_ref(ht, pos), elem)) {
+            return hash_table_ref(ht, pos);
+        }
+        pos++;
+        if (pos >= ht->cap) { // arrived end, restart from beginning
+            pos = 0;
         }
     }
     return NULL;
 }
 
-void *hash_table_begin(hash_table_t *ht) { return ht->begin; }
+void* hash_table_begin(hash_table_t *ht) {
+    if (ht->size <= 0) return NULL;
+    for (int64_t i = 0; i < ht->cap; i++) {
+        if (ht->flagbuf[i] == HTFL_VAL) {
+            return hash_table_ref(ht, i);
+        }
+    }
+    return NULL;
+}
 
 void *hash_table_next(hash_table_t *ht, void *iter) {
-    void *pos = iter;
+    int64_t pos = (iter - ht->buf) / ht->elemsz;
     do {
-        pos += ht->elemsz + 1;
-        if (pos >= hash_table_end(ht)) {
+        pos++;
+        if (pos >= ht->cap) {
             return NULL;
         }
-    } while (getflag(pos) != HTFL_VAL);
-    return pos;
+    } while (ht->flagbuf[pos] != HTFL_VAL);
+    return hash_table_ref(ht, pos);
+}
+
+void destroy_hash_table(hash_table_t *ht) {
+    free(ht->buf);
+    free(ht->flagbuf);
 }

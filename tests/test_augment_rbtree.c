@@ -113,6 +113,7 @@ static void test_largedata() {
         IntIntEntry *iter = rb_tree_find(&tree, &input[i]);
         assert(iter != NULL);
         rb_tree_remove(&tree, iter);
+        free(iter);
     }
     // check tree validity
     d = depth(tree.rbh_root);
@@ -126,4 +127,5 @@ static void test_largedata() {
         assert(iter->key == i * 3);
         i++;
     }
+    destroy_rb_tree(&tree, NULL);
 }
