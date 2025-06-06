@@ -28,36 +28,36 @@
 #define RED 1
 #define BLACK 0
 
-static rb_node_t *rb_tree_minmax(rb_tree_t *, int);
-void *rb_tree_min(rb_tree_t *head) { return rb_tree_minmax(head, -1); }
-void *rb_tree_max(rb_tree_t *head) { return rb_tree_minmax(head, 1); }
+static RBNode *rb_tree_minmax(RBTree *, int);
+void *rb_tree_min(RBTree *head) { return rb_tree_minmax(head, -1); }
+void *rb_tree_max(RBTree *head) { return rb_tree_minmax(head, 1); }
 
 void *rb_tree_left(void *node) {
-    rb_node_t *elm = node;
+    RBNode *elm = node;
     if (node == NULL) return NULL;
     return elm->entry.rbe_left;
 }
 void *rb_tree_right(void *node) {
-    rb_node_t *elm = node;
+    RBNode *elm = node;
     if (node == NULL) return NULL;
     return elm->entry.rbe_right;
 }
 void *rb_tree_parent(void *node) {
-    rb_node_t *elm = node;
+    RBNode *elm = node;
     if (node == NULL) return NULL;
     return elm->entry.rbe_parent;
 }
 
-static void augment(rb_tree_t *head, rb_node_t *elm) {
+static void augment(RBTree *head, RBNode *elm) {
     if (head->augment != NULL) head->augment(elm);
 }
 
-static void rb_tree_insert_color(rb_tree_t *head, rb_node_t *elm);
-static void rb_tree_remove_color(rb_tree_t *head, rb_node_t *parent,
-                                 rb_node_t *elm);
+static void rb_tree_insert_color(RBTree *head, RBNode *elm);
+static void rb_tree_remove_color(RBTree *head, RBNode *parent,
+                                 RBNode *elm);
 
-static void rotate_left(rb_tree_t *head, rb_node_t *elm) {
-    rb_node_t *tmp = elm->entry.rbe_right;
+static void rotate_left(RBTree *head, RBNode *elm) {
+    RBNode *tmp = elm->entry.rbe_right;
     if ((elm->entry.rbe_right = tmp->entry.rbe_left)) {
         tmp->entry.rbe_left->entry.rbe_parent = elm;
     }
@@ -78,8 +78,8 @@ static void rotate_left(rb_tree_t *head, rb_node_t *elm) {
     }
 }
 
-static void rotate_right(rb_tree_t *head, rb_node_t *elm) {
-    rb_node_t *tmp = elm->entry.rbe_left;
+static void rotate_right(RBTree *head, RBNode *elm) {
+    RBNode *tmp = elm->entry.rbe_left;
     if ((elm->entry.rbe_left = tmp->entry.rbe_right)) {
         tmp->entry.rbe_right->entry.rbe_parent = elm;
     }
@@ -100,8 +100,8 @@ static void rotate_right(rb_tree_t *head, rb_node_t *elm) {
     }
 }
 
-static void rb_tree_insert_color(rb_tree_t *head, rb_node_t *elm) {
-    rb_node_t *parent, *gparent, *tmp;
+static void rb_tree_insert_color(RBTree *head, RBNode *elm) {
+    RBNode *parent, *gparent, *tmp;
     while ((parent = elm->entry.rbe_parent) && parent->entry.rbe_color == 1) {
         gparent = parent->entry.rbe_parent;
         if (parent == gparent->entry.rbe_left) {
@@ -146,9 +146,9 @@ static void rb_tree_insert_color(rb_tree_t *head, rb_node_t *elm) {
     head->rbh_root->entry.rbe_color = BLACK;
 }
 
-static void rb_tree_remove_color(rb_tree_t *head, rb_node_t *parent,
-                                 rb_node_t *elm) {
-    rb_node_t *tmp;
+static void rb_tree_remove_color(RBTree *head, RBNode *parent,
+                                 RBNode *elm) {
+    RBNode *tmp;
     while ((elm == NULL || elm->entry.rbe_color == 0) &&
            elm != head->rbh_root) {
         if (parent->entry.rbe_left == elm) {
@@ -169,7 +169,7 @@ static void rb_tree_remove_color(rb_tree_t *head, rb_node_t *parent,
             } else {
                 if (tmp->entry.rbe_right == NULL ||
                     tmp->entry.rbe_right->entry.rbe_color == 0) {
-                    rb_node_t *oleft;
+                    RBNode *oleft;
                     if ((oleft = tmp->entry.rbe_left))
                         oleft->entry.rbe_color = BLACK;
                     tmp->entry.rbe_color = RED;
@@ -202,7 +202,7 @@ static void rb_tree_remove_color(rb_tree_t *head, rb_node_t *parent,
             } else {
                 if (tmp->entry.rbe_left == NULL ||
                     tmp->entry.rbe_left->entry.rbe_color == 0) {
-                    rb_node_t *oright;
+                    RBNode *oright;
                     if ((oright = tmp->entry.rbe_right))
                         oright->entry.rbe_color = BLACK;
                     tmp->entry.rbe_color = RED;
@@ -222,16 +222,16 @@ static void rb_tree_remove_color(rb_tree_t *head, rb_node_t *parent,
     if (elm) elm->entry.rbe_color = BLACK;
 }
 
-void rb_tree_remove(rb_tree_t *head, void *elmv) {
-    rb_node_t *elm = elmv;
-    rb_node_t *child, *parent;
+void rb_tree_remove(RBTree *head, void *elmv) {
+    RBNode *elm = elmv;
+    RBNode *child, *parent;
     int color;
     if (elm->entry.rbe_left == NULL)
         child = elm->entry.rbe_right;
     else if (elm->entry.rbe_right == NULL)
         child = elm->entry.rbe_left;
     else {
-        rb_node_t *old = elm, *left;
+        RBNode *old = elm, *left;
         elm = elm->entry.rbe_right;
         while ((left = elm->entry.rbe_left))
             elm = left;
@@ -277,7 +277,7 @@ void rb_tree_remove(rb_tree_t *head, void *elmv) {
             parent->entry.rbe_left = child;
         else
             parent->entry.rbe_right = child;
-        rb_node_t *goback = parent;
+        RBNode *goback = parent;
         if (head->augment != NULL) {
             do {
                 augment(head, goback);
@@ -289,10 +289,10 @@ color:
     if (color == 0) rb_tree_remove_color(head, parent, child);
 }
 
-void *rb_tree_insert(rb_tree_t *head, void *elmv) {
-    rb_node_t *elm = elmv;
-    rb_node_t *tmp;
-    rb_node_t *parent = NULL;
+void *rb_tree_insert(RBTree *head, void *elmv) {
+    RBNode *elm = elmv;
+    RBNode *tmp;
+    RBNode *parent = NULL;
     int comp = 0;
     tmp = head->rbh_root;
     while (tmp) {
@@ -313,7 +313,7 @@ void *rb_tree_insert(rb_tree_t *head, void *elmv) {
             parent->entry.rbe_left = elm;
         else
             parent->entry.rbe_right = elm;
-        rb_node_t *goback = parent;
+        RBNode *goback = parent;
         if (head->augment != NULL) {
             do {
                 augment(head, goback);
@@ -325,8 +325,8 @@ void *rb_tree_insert(rb_tree_t *head, void *elmv) {
     return (NULL);
 }
 
-void *rb_tree_find(rb_tree_t *head, void *key) {
-    rb_node_t *tmp = head->rbh_root;
+void *rb_tree_find(RBTree *head, void *key) {
+    RBNode *tmp = head->rbh_root;
     int comp;
     while (tmp) {
         comp = head->cmp(key, (void *)tmp->content);
@@ -340,8 +340,8 @@ void *rb_tree_find(rb_tree_t *head, void *key) {
     return (NULL);
 }
 
-void *rb_tree_next(rb_tree_t *head, void *elmv) {
-    rb_node_t *elm = elmv;
+void *rb_tree_next(RBTree *head, void *elmv) {
+    RBNode *elm = elmv;
     if (elm->entry.rbe_right) {
         elm = elm->entry.rbe_right;
         while (elm->entry.rbe_left)
@@ -360,9 +360,9 @@ void *rb_tree_next(rb_tree_t *head, void *elmv) {
     return elm;
 }
 
-static rb_node_t *rb_tree_minmax(rb_tree_t *head, int val) {
-    rb_node_t *tmp = head->rbh_root;
-    rb_node_t *parent = NULL;
+static RBNode *rb_tree_minmax(RBTree *head, int val) {
+    RBNode *tmp = head->rbh_root;
+    RBNode *parent = NULL;
     while (tmp) {
         parent = tmp;
         if (val < 0)
@@ -373,7 +373,7 @@ static rb_node_t *rb_tree_minmax(rb_tree_t *head, int val) {
     return parent;
 };
 
-static void destroy_rb_tree_impl(rb_node_t *node, void (*free_cb)(void *)) {
+static void destroy_rb_tree_impl(RBNode *node, void (*free_cb)(void *)) {
     if (node == NULL) return;
     if (free_cb != NULL) free_cb(node->content);
     destroy_rb_tree_impl(node->entry.rbe_left, free_cb);
@@ -381,6 +381,6 @@ static void destroy_rb_tree_impl(rb_node_t *node, void (*free_cb)(void *)) {
     free(node);
 }
 
-void destroy_rb_tree(rb_tree_t *head, void (*free_cb)(void *)) {
+void destroy_rb_tree(RBTree *head, void (*free_cb)(void *)) {
     destroy_rb_tree_impl(head->rbh_root, free_cb);
 }

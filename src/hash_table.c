@@ -8,8 +8,8 @@
 #define HTFL_DEL 2
 
 
-static void rebuild(hash_table_t *ht) {
-    hash_table_t newht;
+static void rebuild(HashTable *ht) {
+    HashTable newht;
     init_hash_table(&newht, ht->elemsz, ht->size * 6, ht->hash, ht->eq);
     void *iter = hash_table_begin(ht);
     while (iter != NULL) {
@@ -21,7 +21,7 @@ static void rebuild(hash_table_t *ht) {
     *ht = newht;
 }
 
-void init_hash_table(hash_table_t *ht, int64_t elemsz, int64_t cap,
+void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap,
                      uint64_t (*hash)(void *), bool (*eq)(void *, void *)) {
     if (cap < 16) cap = 16;
     ht->buf = malloc(cap * elemsz);
@@ -36,7 +36,7 @@ void init_hash_table(hash_table_t *ht, int64_t elemsz, int64_t cap,
     ht->eq = eq;
 }
 
-bool hash_table_insert(hash_table_t *ht, void *elem) {
+bool hash_table_insert(HashTable *ht, void *elem) {
     if (ht->taken + 1 > ht->cap / 2) {
         rebuild(ht);
     }
@@ -58,17 +58,17 @@ bool hash_table_insert(hash_table_t *ht, void *elem) {
     return true;
 }
 
-void hash_table_remove(hash_table_t *ht, void * ptr) {
+void hash_table_remove(HashTable *ht, void * ptr) {
     ht->size--;
     int64_t pos = (ptr - ht->buf) / ht->elemsz;
     ht->flagbuf[pos] = HTFL_DEL;
 }
 
-void *hash_table_ref(hash_table_t *ht, int64_t pos) {
+void *hash_table_ref(HashTable *ht, int64_t pos) {
     return ht->buf + pos * ht->elemsz;
 }
 
-void *hash_table_find(hash_table_t *ht, void *elem) {
+void *hash_table_find(HashTable *ht, void *elem) {
     int64_t pos = ht->hash(elem) % ht->cap;
     while (ht->flagbuf[pos] != HTFL_NUL) {
         if (ht->flagbuf[pos] == HTFL_VAL
@@ -83,7 +83,7 @@ void *hash_table_find(hash_table_t *ht, void *elem) {
     return NULL;
 }
 
-void* hash_table_begin(hash_table_t *ht) {
+void* hash_table_begin(HashTable *ht) {
     if (ht->size <= 0) return NULL;
     for (int64_t i = 0; i < ht->cap; i++) {
         if (ht->flagbuf[i] == HTFL_VAL) {
@@ -93,7 +93,7 @@ void* hash_table_begin(hash_table_t *ht) {
     return NULL;
 }
 
-void *hash_table_next(hash_table_t *ht, void *iter) {
+void *hash_table_next(HashTable *ht, void *iter) {
     int64_t pos = (iter - ht->buf) / ht->elemsz;
     do {
         pos++;
@@ -104,7 +104,7 @@ void *hash_table_next(hash_table_t *ht, void *iter) {
     return hash_table_ref(ht, pos);
 }
 
-void destroy_hash_table(hash_table_t *ht) {
+void destroy_hash_table(HashTable *ht) {
     free(ht->buf);
     free(ht->flagbuf);
 }

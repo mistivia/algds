@@ -14,17 +14,17 @@ struct hash_table {
     uint64_t (*hash)(void *);
     bool (*eq)(void *, void *);
 };
-typedef struct hash_table hash_table_t;
+typedef struct hash_table HashTable;
 
-void init_hash_table(hash_table_t *ht, int64_t elemsz, int64_t cap,
+void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap,
                      uint64_t (*hash)(void *), bool (*eq)(void *, void *));
-bool hash_table_insert(hash_table_t *ht, void *elem);
-void hash_table_remove(hash_table_t *ht, void *iter);
+bool hash_table_insert(HashTable *ht, void *elem);
+void hash_table_remove(HashTable *ht, void *iter);
 
 // return a iterator
-void *hash_table_find(hash_table_t *ht, void *elem);
-void *hash_table_begin(hash_table_t *ht);
-void *hash_table_next(hash_table_t *ht, void *iter);
-void destroy_hash_table(hash_table_t *ht);
+void *hash_table_find(HashTable *ht, void *elem);
+void *hash_table_begin(HashTable *ht);
+void *hash_table_next(HashTable *ht, void *iter);
+void destroy_hash_table(HashTable *ht);
 
 #endif

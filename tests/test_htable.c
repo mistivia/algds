@@ -18,7 +18,7 @@ bool found[10000];
 int main() {
     printf("[TEST] htable\n");
 
-    hash_table_t ht;
+    HashTable ht;
     init_hash_table(&ht, sizeof(int), -1, hash, eq);
     for (int i = 0; i < 10000; i++) {
         hash_table_insert(&ht, &i);

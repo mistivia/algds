@@ -6,11 +6,11 @@
 #include "rb_tree.h"
 
 typedef struct {
-    rb_node_t node;
+    RBNode node;
     int key;
     int value;
     int amount;
-} IntIntEntry;
+} Int2IntRBNode;
 
 static int cmpfunc(void *x, void *y) {
     int *a = x, *b = y;
@@ -18,9 +18,9 @@ static int cmpfunc(void *x, void *y) {
 }
 
 static void augment(void *n) {
-    IntIntEntry *node = n;
-    IntIntEntry *left = rb_tree_left(node);
-    IntIntEntry *right = rb_tree_right(node);
+    Int2IntRBNode *node = n;
+    Int2IntRBNode *left = rb_tree_left(node);
+    Int2IntRBNode *right = rb_tree_right(node);
     node->amount = 1;
     node->amount += left == NULL ? 0 : left->amount;
     node->amount += right == NULL ? 0 : right->amount;
@@ -31,15 +31,15 @@ static void test_largedata();
 static int max(int a, int b) { return a > b ? a : b; }
 
 int depth(void *n) {
-    rb_node_t *node = n;
+    RBNode *node = n;
     if (node == NULL) return 0;
     return max(depth(node->entry.rbe_left), depth(node->entry.rbe_right)) + 1;
 }
 
-void checkaugment(IntIntEntry *node) {
+void checkaugment(Int2IntRBNode *node) {
     if (node == NULL) return;
-    IntIntEntry *left = rb_tree_left(node);
-    IntIntEntry *right = rb_tree_right(node);
+    Int2IntRBNode *left = rb_tree_left(node);
+    Int2IntRBNode *right = rb_tree_right(node);
     int amount = 1;
     amount += left == NULL ? 0 : left->amount;
     amount += right == NULL ? 0 : right->amount;
@@ -76,8 +76,8 @@ static void test_largedata() {
     }
     shuffle(input, TESTSZ);
     // insert
-    rb_tree_t tree = {NULL, cmpfunc, augment};
-    IntIntEntry *n;
+    RBTree tree = {NULL, cmpfunc, augment};
+    Int2IntRBNode *n;
     for (int i = 0; i < TESTSZ; i++) {
         n = malloc(sizeof(*n));
         n->key = input[i];
@@ -88,10 +88,10 @@ static void test_largedata() {
     // check tree validity
     int d = depth(tree.rbh_root);
     assert(d >= 13 && d <= 28);
-    IntIntEntry *root = (IntIntEntry *)(tree.rbh_root);
+    Int2IntRBNode *root = (Int2IntRBNode *)(tree.rbh_root);
     assert(root->amount == TESTSZ);
     checkaugment(root);
-    IntIntEntry *iter = rb_tree_min(&tree);
+    Int2IntRBNode *iter = rb_tree_min(&tree);
     int i = 0;
     for (; iter != NULL; iter = rb_tree_next(&tree, iter)) {
         assert(iter->key == i);
@@ -110,7 +110,7 @@ static void test_largedata() {
     }
     shuffle(input, count);
     for (int i = 0; i < count; i++) {
-        IntIntEntry *iter = rb_tree_find(&tree, &input[i]);
+        Int2IntRBNode *iter = rb_tree_find(&tree, &input[i]);
         assert(iter != NULL);
         rb_tree_remove(&tree, iter);
         free(iter);
@@ -118,7 +118,7 @@ static void test_largedata() {
     // check tree validity
     d = depth(tree.rbh_root);
     assert(d >= 11 && d <= 24);
-    root = (IntIntEntry *)(tree.rbh_root);
+    root = (Int2IntRBNode *)(tree.rbh_root);
     assert(root->amount == TESTSZ - count);
     checkaugment(root);
     iter = rb_tree_min(&tree);

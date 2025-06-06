@@ -37,28 +37,28 @@ struct rb_node {
     } entry;
     char content[0];
 };
-typedef struct rb_node rb_node_t;
+typedef struct rb_node RBNode;
 
 struct rb_tree {
-    rb_node_t *rbh_root;
+    RBNode *rbh_root;
     int (*cmp)(void *k1, void *k2);
     void (*augment)(void *elm);
 };
-typedef struct rb_tree rb_tree_t;
+typedef struct rb_tree RBTree;
 
-void rb_tree_remove(rb_tree_t *, void *iter);
+void rb_tree_remove(RBTree *, void *iter);
 
 // return a iterator
-void *rb_tree_insert(rb_tree_t *, void *treenode);
-void *rb_tree_find(rb_tree_t *, void *val);
-void *rb_tree_next(rb_tree_t *, void *iter);
-void *rb_tree_min(rb_tree_t *);
-void *rb_tree_max(rb_tree_t *);
+void *rb_tree_insert(RBTree *, void *treenode);
+void *rb_tree_find(RBTree *, void *val);
+void *rb_tree_next(RBTree *, void *iter);
+void *rb_tree_min(RBTree *);
+void *rb_tree_max(RBTree *);
 void *rb_tree_left(void *node);
 void *rb_tree_right(void *node);
 void *rb_tree_parent(void *node);
 
-void destroy_rb_tree(rb_tree_t *, void (*freeCb)(void *));
+void destroy_rb_tree(RBTree *, void (*freeCb)(void *));
 
 #endif
 
