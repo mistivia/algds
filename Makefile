@@ -1,7 +1,13 @@
+mode ?= debug
+
 cc = gcc
-cflags = \
-	-g \
-	-fsanitize=address
+ifeq ($(mode), debug)
+	cflags = \
+		-g \
+		-fsanitize=address
+else
+	cflags = -O2
+endif
 
 src = $(shell ls src/*.c)
 obj = $(src:.c=.o)
