@@ -79,8 +79,11 @@ typedef struct hash_table HashTable;
 HASH_TABLE_DEF(String, Int);
 HASH_TABLE_DEF(String, String);
 HASH_TABLE_DEF(String, Double);
+HASH_TABLE_DEF(String, VoidPtr);
 HASH_TABLE_DEF(Int, Int);
 HASH_TABLE_DEF(Int, Double);
+HASH_TABLE_DEF(VoidPtr, Int);
+HASH_TABLE_DEF(VoidPtr, String);
 
 void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap);
 bool hash_table_insert(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq);

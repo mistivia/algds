@@ -11,3 +11,4 @@ VECTOR_IMPL(ULong);
 VECTOR_IMPL(Double);
 VECTOR_IMPL(Float);
 VECTOR_IMPL(String);
+VECTOR_IMPL(VoidPtr);

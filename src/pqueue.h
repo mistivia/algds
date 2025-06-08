@@ -23,6 +23,7 @@ PQUEUE_DEF(ULong);
 PQUEUE_DEF(Double);
 PQUEUE_DEF(Float);
 PQUEUE_DEF(String);
+PQUEUE_DEF(VoidPtr);
 
 #define PQUEUE_IMPL(T) \
     static int T##PQueue_cmp(T##PQueue *self, int a, int b) { \

@@ -92,5 +92,6 @@ VECTOR_DEF(ULong);
 VECTOR_DEF(Double);
 VECTOR_DEF(Float);
 VECTOR_DEF(String);
+VECTOR_DEF(VoidPtr);
 
 #endif

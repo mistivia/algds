@@ -12,8 +12,11 @@
 HASH_TABLE_IMPL(String, Int);
 HASH_TABLE_IMPL(String, String);
 HASH_TABLE_IMPL(String, Double);
+HASH_TABLE_IMPL(String, VoidPtr);
 HASH_TABLE_IMPL(Int, Int);
 HASH_TABLE_IMPL(Int, Double);
+HASH_TABLE_IMPL(VoidPtr, Int);
+HASH_TABLE_IMPL(VoidPtr, String);
 
 
 static void rebuild(HashTable *ht, VoidHashFn hash, VoidEqFn eq) {

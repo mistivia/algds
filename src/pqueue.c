@@ -14,3 +14,4 @@ PQUEUE_IMPL(ULong);
 PQUEUE_IMPL(Double);
 PQUEUE_IMPL(Float);
 PQUEUE_IMPL(String);
+PQUEUE_IMPL(VoidPtr);

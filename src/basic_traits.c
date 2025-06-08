@@ -25,6 +25,7 @@ BASIC_TRAITS_IMPL(UInt);
 BASIC_TRAITS_IMPL(ULong);
 BASIC_TRAITS_IMPL(Double);
 BASIC_TRAITS_IMPL(Float);
+BASIC_TRAITS_IMPL(VoidPtr);
 
 bool String_eq(String* lhs, String *rhs) {
     return strcmp(*lhs, *rhs) == 0;
