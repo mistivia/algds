@@ -8,7 +8,7 @@
 
 typedef Int MinInt;
 
-int MinInt_cmp(Int *lhs, Int *rhs) {
+int MinInt_cmp(Int lhs, Int rhs) {
     return -Int_cmp(lhs, rhs);
 }
 
@@ -26,7 +26,7 @@ int main() {
     int elems[10] = {1, 3, 2, 4, 6, 5, 9, 7, 8, 10};
     for (int i = 0; i < 10; i++) {
         int e = elems[i];
-        IntPQueue_push(&pq, &e);
+        IntPQueue_push(&pq, e);
     }
     for (int i = 10; i >= 1; i--) {
         int *top = IntPQueue_top(&pq);
@@ -40,7 +40,7 @@ int main() {
     MinIntPQueue_init(&minpq);
     for (int i = 0; i < 10; i++) {
         int e = elems[i];
-        MinIntPQueue_push(&minpq, &e);
+        MinIntPQueue_push(&minpq, e);
     }
     for (int i = 1; i <= 10; i++) {
         int *top = MinIntPQueue_top(&minpq);
@@ -54,7 +54,7 @@ int main() {
     int expected[10] = {-10, -8, -7, -7, -5, -5, -4, -2, -2, -1};
     for (int i = 0; i < 10; i++) {
         int e = elems2[i];
-        IntPQueue_push(&pq, &e);
+        IntPQueue_push(&pq, e);
         int *top = IntPQueue_top(&pq);
         assert(*top == expected[i]);
     }

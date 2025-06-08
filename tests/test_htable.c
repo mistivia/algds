@@ -13,16 +13,17 @@ int main() {
     Int2IntHashTable ht;
     Int2IntHashTable_init(&ht);
     for (int i = 0; i < 10000; i++) {
-        Int2IntHashTable_insert(&ht, &i, &i);
+        Int2IntHashTable_insert(&ht, i, i*2);
         assert(ht.ht.size == i + 1);
         assert(ht.ht.taken == i + 1);
         assert(ht.ht.cap >= i + 1);
     }
 
     for (int i = 0; i < 10000; i++) {
-        assert(Int2IntHashTable_get(&ht, &i) != NULL);
+        assert(Int2IntHashTable_get(&ht, i) != NULL);
+        assert(*Int2IntHashTable_get(&ht, i) == i * 2);
         int t = 10000 + i;
-        assert(Int2IntHashTable_get(&ht, &t) == NULL);
+        assert(Int2IntHashTable_get(&ht, t) == NULL);
     }
 
     memset(found, 0, sizeof(bool) * 10000);
@@ -36,17 +37,17 @@ int main() {
     }
 
     for (int i = 0; i < 5000; i++) {
-        Int2IntHashTableIter iter = Int2IntHashTable_find(&ht, &i);
+        Int2IntHashTableIter iter = Int2IntHashTable_find(&ht, i);
         Int2IntHashTable_remove(&ht, iter);
     }
     for (int i = 0; i < 5000; i++) {
-        assert(Int2IntHashTable_find(&ht, &i) == NULL);
+        assert(Int2IntHashTable_find(&ht, i) == NULL);
         int t = 5000 + i;
-        assert(Int2IntHashTable_find(&ht, &t) != NULL);
+        assert(Int2IntHashTable_find(&ht, t) != NULL);
     }
 
     for (int i = 0; i < 5000; i++) {
-        Int2IntHashTable_insert(&ht, &i, &i);
+        Int2IntHashTable_insert(&ht, i, i);
     }
 
     memset(found, 0, sizeof(bool) * 10000);

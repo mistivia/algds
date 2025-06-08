@@ -26,30 +26,38 @@ typedef struct hash_table HashTable;
         HashTable ht; \
     } K##2##V##HashTable; \
     void K##2##V##HashTable_init(K##2##V##HashTable *self); \
-    bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K *key, V *value); \
+    bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K key, V value); \
     void K##2##V##HashTable_remove(K##2##V##HashTable *ht, K##2##V##HashTableIter iter); \
-    V* K##2##V##HashTable_get(K##2##V##HashTable *self, K *key); \
-    K##2##V##HashTableIter K##2##V##HashTable_find(K##2##V##HashTable *self, K *key); \
+    V* K##2##V##HashTable_get(K##2##V##HashTable *self, K key); \
+    K##2##V##HashTableIter K##2##V##HashTable_find(K##2##V##HashTable *self, K key); \
     K##2##V##HashTableIter K##2##V##HashTable_begin(K##2##V##HashTable *self); \
     K##2##V##HashTableIter K##2##V##HashTable_next(K##2##V##HashTable *self, K##2##V##HashTableIter iter); \
     void K##2##V##HashTable_free(K##2##V##HashTable *self); \
     K##2##V##HashTable K##2##V##HashTable_move(K##2##V##HashTable *self); \
 
 #define HASH_TABLE_IMPL(K, V) \
+    static uint64_t K##2##V##HashTable_hash(void *vk) { \
+        K *k = vk; \
+        return K##_hash(*k); \
+    } \
+    static bool K##2##V##HashTable_eq(void *vk1, void *vk2) { \
+        K *k1 = vk1, *k2 = vk2; \
+        return K##_eq(*k1, *k2); \
+    } \
     void K##2##V##HashTable_init(K##2##V##HashTable *self) { \
         init_hash_table(&self->ht, sizeof(K##2##V##HashTableEntry), 16); \
     } \
-    bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K *key, V *value) { \
+    bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K key, V value) { \
         K##2##V##HashTableEntry entry; \
-        memcpy(&entry.key, key, sizeof(K)); \
-        memcpy(&entry.val, value, sizeof(K)); \
-        return hash_table_insert(&self->ht, &entry, (VoidHashFn)K##_hash, (VoidEqFn)K##_eq); \
+        entry.key = key; \
+        entry.val = value; \
+        return hash_table_insert(&self->ht, &entry, K##2##V##HashTable_hash, K##2##V##HashTable_eq); \
     } \
-    K##2##V##HashTableIter K##2##V##HashTable_find(K##2##V##HashTable *self, K *key) { \
-        return hash_table_find(&self->ht, key, (VoidHashFn)K##_hash, (VoidEqFn)K##_eq); \
+    K##2##V##HashTableIter K##2##V##HashTable_find(K##2##V##HashTable *self, K key) { \
+        return hash_table_find(&self->ht, &key, K##2##V##HashTable_hash, K##2##V##HashTable_eq); \
     } \
-    V* K##2##V##HashTable_get(K##2##V##HashTable *self, K *key) { \
-        K##2##V##HashTableEntry* entry = hash_table_find(&self->ht, key, (VoidHashFn)K##_hash, (VoidEqFn)K##_eq); \
+    V* K##2##V##HashTable_get(K##2##V##HashTable *self, K key) { \
+        K##2##V##HashTableEntry* entry = hash_table_find(&self->ht, &key, K##2##V##HashTable_hash, K##2##V##HashTable_eq); \
         if (entry == NULL) return NULL; \
         return &(entry->val); \
     } \
@@ -86,9 +94,9 @@ HASH_TABLE_DEF(VoidPtr, Int);
 HASH_TABLE_DEF(VoidPtr, String);
 
 void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap);
-bool hash_table_insert(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq);
+bool hash_table_insert(HashTable *ht, void *elem, uint64_t (*hash)(void*), bool (*eq)(void*, void*));
 void hash_table_remove(HashTable *ht, void *iter);
-void *hash_table_find(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq);
+void *hash_table_find(HashTable *ht, void *elem, uint64_t (*hash)(void*), bool (*eq)(void*, void*));
 void *hash_table_begin(HashTable *ht);
 void *hash_table_next(HashTable *ht, void *iter);
 void destroy_hash_table(HashTable *ht);

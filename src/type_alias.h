@@ -15,8 +15,5 @@ typedef double Double;
 typedef const char *String;
 typedef const void *VoidPtr;
 
-typedef uint64_t (*VoidHashFn)(void*);
-typedef bool (*VoidEqFn)(void*, void*);
-typedef int (*VoidCmpFn)(void*, void*);
 
 #endif

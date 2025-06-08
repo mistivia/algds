@@ -8,7 +8,7 @@
         T##Vector vec; \
     } T##PQueue; \
     void T##PQueue_init(T##PQueue *self); \
-    void T##PQueue_push(T##PQueue *self, T *elem); \
+    void T##PQueue_push(T##PQueue *self, T elem); \
     void T##PQueue_pop(T##PQueue *self); \
     T* T##PQueue_top(T##PQueue *self); \
     T##PQueue T##PQueue_move(T##PQueue *self); \
@@ -27,12 +27,12 @@ PQUEUE_DEF(VoidPtr);
 
 #define PQUEUE_IMPL(T) \
     static int T##PQueue_cmp(T##PQueue *self, int a, int b) { \
-        return T##_cmp(T##Vector_ref(&self->vec, a), T##Vector_ref(&self->vec, b)); \
+        return T##_cmp(*T##Vector_ref(&self->vec, a), *T##Vector_ref(&self->vec, b)); \
     } \
     void T##PQueue_init(T##PQueue *self) { \
          T##Vector_init(&self->vec); \
     } \
-    void T##PQueue_push(T##PQueue *self, T *elem) { \
+    void T##PQueue_push(T##PQueue *self, T elem) { \
         T##Vector_push_back(&self->vec, elem); \
         int i = self->vec.size - 1; \
         while (i > 0 && T##PQueue_cmp(self, i, i / 2) > 0) { \

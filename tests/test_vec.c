@@ -11,7 +11,7 @@ int main() {
 
     for (int i = 0; i < 1000; i++) {
         assert(vec.size == i);
-        IntVector_push_back(&vec, &i);
+        IntVector_push_back(&vec, i);
         assert(*(IntVector_end(&vec) - 1) == i);
     }
     assert(*IntVector_begin(&vec) == 0);

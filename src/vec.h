@@ -13,8 +13,8 @@
     } T##Vector; \
     \
     void T##Vector_init(T##Vector *self); \
-    void T##Vector_push_back(T##Vector *self, T *elem); \
-    void T##Vector_insert_before(T##Vector *self, int n, T *elem); \
+    void T##Vector_push_back(T##Vector *self, T elem); \
+    void T##Vector_insert_before(T##Vector *self, int n, T elem); \
     void T##Vector_pop(T##Vector *self); \
     void T##Vector_remove(T##Vector *self, size_t n); \
     size_t T##Vector_len(T##Vector *self); \
@@ -32,15 +32,15 @@
         self->size = 0; \
     } \
     \
-    void T##Vector_push_back(T##Vector *self, T *elem) { \
+    void T##Vector_push_back(T##Vector *self, T elem) { \
         if (self->size + 1 > self->cap) { \
             self->buffer = realloc(self->buffer, sizeof(T) * self->cap * 2); \
             self->cap *= 2; \
         } \
-        memmove(self->buffer + self->size, elem, sizeof(T)); \
+        self->buffer[self->size] = elem; \
         self->size += 1; \
     } \
-    void T##Vector_insert_before(T##Vector *self, int n, T *elem) { \
+    void T##Vector_insert_before(T##Vector *self, int n, T elem) { \
         if (n < 0 || n > self->size) { \
             return; \
         } \
@@ -52,7 +52,7 @@
             memmove(self->buffer + n + 1, \
                     self->buffer + n, \
                     sizeof(T) * (self->size - n)); \
-            memmove(self->buffer + n, elem, sizeof(T)); \
+            self->buffer[n] = elem; \
         } \
     } \
     void T##Vector_pop(T##Vector *self) { \

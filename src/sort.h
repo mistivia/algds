@@ -13,9 +13,9 @@
     void T##_qsort_swap(T* arr, int lhs, int rhs) { \
         if (lhs == rhs) return; \
         T buf; \
-        memcpy(&buf, arr+lhs, sizeof(T)); \
-        memcpy(arr+lhs, arr+rhs, sizeof(T)); \
-        memcpy(arr+rhs, &buf, sizeof(T)); \
+        buf = arr[lhs]; \
+        arr[lhs] = arr[rhs]; \
+        arr[rhs] = buf; \
     } \
     void T##_qsort(T* arr, int n) { \
         if (n <= 1) return; \
@@ -23,11 +23,11 @@
         T##_qsort_swap(arr, 0, pivot); \
         int lp = 1, rp = n-1; \
         while (lp < rp) { \
-            if (T##_cmp(arr+lp, arr) < 0) { \
+            if (T##_cmp(arr[lp], arr[0]) < 0) { \
                 lp++; \
                 continue; \
             } \
-            if (T##_cmp(arr+rp, arr) >= 0) { \
+            if (T##_cmp(arr[rp], arr[0]) >= 0) { \
                 rp--; \
                 continue; \
             } \
@@ -35,7 +35,7 @@
             lp++; \
             rp--; \
         } \
-        if (T##_cmp(arr + rp, arr) > 0) rp--; \
+        if (T##_cmp(arr[rp], arr[0]) > 0) rp--; \
         T##_qsort_swap(arr, 0, rp); \
         T##_qsort(arr, rp); \
         T##_qsort(arr+rp+1, n-rp-1); \

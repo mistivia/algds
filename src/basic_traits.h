@@ -5,9 +5,9 @@
 
 // basic traits
 #define BASIC_TRAITS_DEF(T) \
-    Bool T##_eq(T* lhs, T* rhs); \
-    Int T##_cmp(T* lhs, T* rhs); \
-    ULong T##_hash(T* x);
+    Bool T##_eq(T lhs, T rhs); \
+    Int T##_cmp(T lhs, T rhs); \
+    ULong T##_hash(T x);
 
 BASIC_TRAITS_DEF(Int);
 BASIC_TRAITS_DEF(Bool);

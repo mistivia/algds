@@ -19,7 +19,7 @@ HASH_TABLE_IMPL(VoidPtr, Int);
 HASH_TABLE_IMPL(VoidPtr, String);
 
 
-static void rebuild(HashTable *ht, VoidHashFn hash, VoidEqFn eq) {
+static void rebuild(HashTable *ht, uint64_t (*hash)(void*), bool (*eq)(void*, void*)) {
     HashTable newht;
     init_hash_table(&newht, ht->elemsz, ht->size * 6);
     void *iter = hash_table_begin(ht);
@@ -44,7 +44,7 @@ void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap) {
     ht->elemsz = elemsz;
 }
 
-bool hash_table_insert(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq) {
+bool hash_table_insert(HashTable *ht, void *elem, uint64_t (*hash)(void*), bool (*eq)(void*, void*)) {
     if (ht->taken + 1 > ht->cap / 2) {
         rebuild(ht, hash, eq);
     }
@@ -76,7 +76,7 @@ void *hash_table_ref(HashTable *ht, int64_t pos) {
     return ht->buf + pos * ht->elemsz;
 }
 
-void *hash_table_find(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq) {
+void *hash_table_find(HashTable *ht, void *elem, uint64_t (*hash)(void*), bool (*eq)(void*, void*)) {
     int64_t pos = hash(elem) % ht->cap;
     while (ht->flagbuf[pos] != HTFL_NUL) {
         if (ht->flagbuf[pos] == HTFL_VAL
