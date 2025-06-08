@@ -21,6 +21,7 @@
     T* T##Vector_begin(T##Vector *self); \
     T* T##Vector_end(T##Vector *self); \
     T* T##Vector_ref(T##Vector *self, size_t n); \
+    void T##Vector_swap(T##Vector *self, int i, int j); \
     void T##Vector_free(T##Vector *self);
 
 #define VECTOR_IMPL(T) \
@@ -66,12 +67,22 @@
     T* T##Vector_begin(T##Vector *self) { return self->buffer; } \
     T* T##Vector_end(T##Vector *self) { return self->buffer + self->size; } \
     T* T##Vector_ref(T##Vector *self, size_t n) { return self->buffer + n; } \
+    void T##Vector_swap(T##Vector *self, int i, int j) { \
+        T buf; \
+        memcpy(&buf, self->buffer + i, sizeof(T)); \
+        memcpy(self->buffer + i, self->buffer + j, sizeof(T)); \
+        memcpy(self->buffer + j, &buf, sizeof(T)); \
+    } \
     void T##Vector_free(T##Vector *self) { free(self->buffer); }
 
-VECTOR_DEF(Char);
 VECTOR_DEF(Int);
+VECTOR_DEF(Bool);
 VECTOR_DEF(Long);
-VECTOR_DEF(Float);
+VECTOR_DEF(Char);
+VECTOR_DEF(UInt);
+VECTOR_DEF(ULong);
 VECTOR_DEF(Double);
+VECTOR_DEF(Float);
+VECTOR_DEF(String);
 
 #endif
