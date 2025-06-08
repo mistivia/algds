@@ -22,6 +22,7 @@
     T* T##Vector_end(T##Vector *self); \
     T* T##Vector_ref(T##Vector *self, size_t n); \
     void T##Vector_swap(T##Vector *self, int i, int j); \
+    T##Vector T##Vector_move(T##Vector *self); \
     void T##Vector_free(T##Vector *self);
 
 #define VECTOR_IMPL(T) \
@@ -72,6 +73,13 @@
         memcpy(&buf, self->buffer + i, sizeof(T)); \
         memcpy(self->buffer + i, self->buffer + j, sizeof(T)); \
         memcpy(self->buffer + j, &buf, sizeof(T)); \
+    } \
+    T##Vector T##Vector_move(T##Vector *self) { \
+        T##Vector dup = *self; \
+        self->buffer = NULL; \
+        self->size = 0; \
+        self->cap = 0; \
+        return dup; \
     } \
     void T##Vector_free(T##Vector *self) { free(self->buffer); }
 

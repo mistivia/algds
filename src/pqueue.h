@@ -11,6 +11,7 @@
     void T##PQueue_push(T##PQueue *self, T *elem); \
     void T##PQueue_pop(T##PQueue *self); \
     T* T##PQueue_top(T##PQueue *self); \
+    T##PQueue T##PQueue_move(T##PQueue *self); \
     void T##PQueue_free(T##PQueue *self); \
 
 PQUEUE_DEF(Int);
@@ -64,6 +65,11 @@ PQUEUE_DEF(String);
     T* T##PQueue_top(T##PQueue *self) { \
         if (self->vec.size == 0) return NULL; \
         return self->vec.buffer; \
+    } \
+    T##PQueue T##PQueue_move(T##PQueue *self) { \
+        T##PQueue dup; \
+        dup.vec = T##Vector_move(&self->vec); \
+        return dup; \
     } \
     void T##PQueue_free(T##PQueue *self) { \
         T##Vector_free(&self->vec); \
