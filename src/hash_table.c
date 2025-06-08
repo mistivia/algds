@@ -3,17 +3,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "basic_traits.h"
+
 #define HTFL_NUL 0
 #define HTFL_VAL 1
 #define HTFL_DEL 2
 
+HASH_TABLE_IMPL(String, Int);
+HASH_TABLE_IMPL(String, String);
+HASH_TABLE_IMPL(String, Double);
+HASH_TABLE_IMPL(Int, Int);
+HASH_TABLE_IMPL(Int, Double);
 
-static void rebuild(HashTable *ht) {
+
+static void rebuild(HashTable *ht, VoidHashFn hash, VoidEqFn eq) {
     HashTable newht;
-    init_hash_table(&newht, ht->elemsz, ht->size * 6, ht->hash, ht->eq);
+    init_hash_table(&newht, ht->elemsz, ht->size * 6);
     void *iter = hash_table_begin(ht);
     while (iter != NULL) {
-        hash_table_insert(&newht, iter);
+        hash_table_insert(&newht, iter, hash, eq);
         iter = hash_table_next(ht, iter);
     }
     free(ht->buf);
@@ -21,8 +29,7 @@ static void rebuild(HashTable *ht) {
     *ht = newht;
 }
 
-void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap,
-                     uint64_t (*hash)(void *), bool (*eq)(void *, void *)) {
+void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap) {
     if (cap < 16) cap = 16;
     ht->buf = malloc(cap * elemsz);
     ht->flagbuf = malloc(cap);
@@ -32,20 +39,18 @@ void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap,
     ht->cap = cap;
     ht->taken = 0;
     ht->elemsz = elemsz;
-    ht->hash = hash;
-    ht->eq = eq;
 }
 
-bool hash_table_insert(HashTable *ht, void *elem) {
+bool hash_table_insert(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq) {
     if (ht->taken + 1 > ht->cap / 2) {
-        rebuild(ht);
+        rebuild(ht, hash, eq);
     }
     ht->taken++;
     ht->size++;
-    int64_t pos = ht->hash(elem) % ht->cap;
+    int64_t pos = hash(elem) % ht->cap;
     while (ht->flagbuf[pos] != HTFL_NUL) {
         if (ht->flagbuf[pos] == HTFL_VAL
-                && ht->eq(ht->buf + pos * ht->elemsz, elem)) {
+                && eq(ht->buf + pos * ht->elemsz, elem)) {
             return false;
         }
         pos++; 
@@ -68,11 +73,11 @@ void *hash_table_ref(HashTable *ht, int64_t pos) {
     return ht->buf + pos * ht->elemsz;
 }
 
-void *hash_table_find(HashTable *ht, void *elem) {
-    int64_t pos = ht->hash(elem) % ht->cap;
+void *hash_table_find(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq) {
+    int64_t pos = hash(elem) % ht->cap;
     while (ht->flagbuf[pos] != HTFL_NUL) {
         if (ht->flagbuf[pos] == HTFL_VAL
-                && ht->eq(hash_table_ref(ht, pos), elem)) {
+                && eq(hash_table_ref(ht, pos), elem)) {
             return hash_table_ref(ht, pos);
         }
         pos++;

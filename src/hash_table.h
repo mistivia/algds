@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "type_alias.h"
+
 struct hash_table {
     void *buf;
     char *flagbuf;
@@ -11,18 +13,79 @@ struct hash_table {
     int64_t cap;
     int64_t taken;
     int64_t elemsz;
-    uint64_t (*hash)(void *);
-    bool (*eq)(void *, void *);
 };
 typedef struct hash_table HashTable;
 
-void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap,
-                     uint64_t (*hash)(void *), bool (*eq)(void *, void *));
-bool hash_table_insert(HashTable *ht, void *elem);
-void hash_table_remove(HashTable *ht, void *iter);
+#define HASH_TABLE_DEF(K, V) \
+    typedef struct { \
+        K key; \
+        V val; \
+    } K##2##V##HashTableEntry; \
+    typedef K##2##V##HashTableEntry *K##2##V##HashTableIter; \
+    typedef struct { \
+        HashTable ht; \
+    } K##2##V##HashTable; \
+    void K##2##V##HashTable_init(K##2##V##HashTable *self); \
+    bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K *key, V *value); \
+    void K##2##V##HashTable_remove(K##2##V##HashTable *ht, K##2##V##HashTableIter iter); \
+    V* K##2##V##HashTable_get(K##2##V##HashTable *self, K *key); \
+    K##2##V##HashTableIter K##2##V##HashTable_find(K##2##V##HashTable *self, K *key); \
+    K##2##V##HashTableIter K##2##V##HashTable_begin(K##2##V##HashTable *self); \
+    K##2##V##HashTableIter K##2##V##HashTable_next(K##2##V##HashTable *self, K##2##V##HashTableIter iter); \
+    void K##2##V##HashTable_free(K##2##V##HashTable *self); \
+    K##2##V##HashTable K##2##V##HashTable_move(K##2##V##HashTable *self); \
 
-// return a iterator
-void *hash_table_find(HashTable *ht, void *elem);
+#define HASH_TABLE_IMPL(K, V) \
+    void K##2##V##HashTable_init(K##2##V##HashTable *self) { \
+        init_hash_table(&self->ht, sizeof(K##2##V##HashTableEntry), 16); \
+    } \
+    bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K *key, V *value) { \
+        K##2##V##HashTableEntry entry; \
+        memcpy(&entry.key, key, sizeof(K)); \
+        memcpy(&entry.val, value, sizeof(K)); \
+        return hash_table_insert(&self->ht, &entry, (VoidHashFn)K##_hash, (VoidEqFn)K##_eq); \
+    } \
+    K##2##V##HashTableIter K##2##V##HashTable_find(K##2##V##HashTable *self, K *key) { \
+        return hash_table_find(&self->ht, key, (VoidHashFn)K##_hash, (VoidEqFn)K##_eq); \
+    } \
+    V* K##2##V##HashTable_get(K##2##V##HashTable *self, K *key) { \
+        K##2##V##HashTableEntry* entry = hash_table_find(&self->ht, key, (VoidHashFn)K##_hash, (VoidEqFn)K##_eq); \
+        if (entry == NULL) return NULL; \
+        return &(entry->val); \
+    } \
+    void K##2##V##HashTable_remove(K##2##V##HashTable *self, K##2##V##HashTableIter iter) { \
+        hash_table_remove(&self->ht, iter); \
+    } \
+    K##2##V##HashTableIter K##2##V##HashTable_begin(K##2##V##HashTable *self) { \
+        return hash_table_begin(&self->ht); \
+    } \
+    K##2##V##HashTableIter K##2##V##HashTable_next(K##2##V##HashTable *self, K##2##V##HashTableIter iter) { \
+        return hash_table_next(&self->ht, iter); \
+    } \
+    void K##2##V##HashTable_free(K##2##V##HashTable *self) { \
+        destroy_hash_table(&self->ht); \
+    } \
+    K##2##V##HashTable K##2##V##HashTable_move(K##2##V##HashTable *self) { \
+        K##2##V##HashTable dup; \
+        dup.ht = self->ht; \
+        self->ht.buf = NULL; \
+        self->ht.flagbuf = NULL; \
+        self->ht.size = 0; \
+        self->ht.cap = 0; \
+        self->ht.taken = 0; \
+        return dup; \
+    } \
+
+HASH_TABLE_DEF(String, Int);
+HASH_TABLE_DEF(String, String);
+HASH_TABLE_DEF(String, Double);
+HASH_TABLE_DEF(Int, Int);
+HASH_TABLE_DEF(Int, Double);
+
+void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap);
+bool hash_table_insert(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq);
+void hash_table_remove(HashTable *ht, void *iter);
+void *hash_table_find(HashTable *ht, void *elem, VoidHashFn hash, VoidEqFn eq);
 void *hash_table_begin(HashTable *ht);
 void *hash_table_next(HashTable *ht, void *iter);
 void destroy_hash_table(HashTable *ht);

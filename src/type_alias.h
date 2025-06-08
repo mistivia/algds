@@ -14,5 +14,8 @@ typedef float Float;
 typedef double Double;
 typedef const char *String;
 
+typedef uint64_t (*VoidHashFn)(void*);
+typedef bool (*VoidEqFn)(void*, void*);
+typedef int (*VoidCmpFn)(void*, void*);
 
 #endif
