@@ -2,11 +2,13 @@
 
 - Red-black tree
 - Augmented red-black tree
-- Priority queue
+- Generic Vector
+- Generic Priority queue
 - Murmur Hash
-- Hash Table
+- Generic Hash Table
 - String utilities
 - Region-based memory management
+- Generic quick sort
 
 ## Build
 
