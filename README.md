@@ -8,7 +8,6 @@
 - Augmented red-black tree
 - Murmur Hash
 - String utilities
-- Region-based memory management
 
 ## Build
 
