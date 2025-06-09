@@ -45,12 +45,13 @@
     K##2##V##TreeMapIter K##2##V##TreeMap_find(K##2##V##TreeMap *self, K key); \
     V* K##2##V##TreeMap_get(K##2##V##TreeMap *self, K key); \
     K##2##V##TreeMapIter K##2##V##TreeMap_next(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter); \
-    void K##2##V##TreeMap_remove(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter); \
     K##2##V##TreeMapIter K##2##V##TreeMap_min(K##2##V##TreeMap *self); \
     K##2##V##TreeMapIter K##2##V##TreeMap_max(K##2##V##TreeMap *self); \
+    void K##2##V##TreeMap_remove(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter); \
     K##2##V##TreeMapIter K##2##V##TreeMap_left(K##2##V##TreeMapIter iter); \
     K##2##V##TreeMapIter K##2##V##TreeMap_right(K##2##V##TreeMapIter iter); \
     K##2##V##TreeMapIter K##2##V##TreeMap_parent(K##2##V##TreeMapIter iter); \
+    void K##2##V##TreeMap_free(K##2##V##TreeMap *self); \
 
 #define TREE_MAP_IMPL(K, V) \
     static int K##2##V##TreeMap_cmp(void *vlhs, void *vrhs) { \
@@ -73,10 +74,11 @@
     } \
     V* K##2##V##TreeMap_get(K##2##V##TreeMap *self, K key) { \
         K##2##V##TreeMapIter iter = rb_tree_find(&self->tree, &key); \
+        if (iter == NULL) return NULL; \
         return &iter->value; \
     } \
     void K##2##V##TreeMap_remove(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter) { \
-        rb_tree_remove(self, iter); \
+        rb_tree_remove(&self->tree, iter); \
     } \
     K##2##V##TreeMapIter K##2##V##TreeMap_next(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter) { \
         return rb_tree_next(&self->tree, iter); \
@@ -95,6 +97,9 @@
     } \
     K##2##V##TreeMapIter K##2##V##TreeMap_parent(K##2##V##TreeMapIter iter) { \
         return rb_tree_parent(iter); \
+    } \
+    void K##2##V##TreeMap_free(K##2##V##TreeMap *self) { \
+        return destroy_rb_tree(&self->tree, NULL); \
     } \
 
 struct rb_node {

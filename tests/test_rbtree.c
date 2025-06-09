@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "rb_tree.h"
+#include "tree_map.h"
 
 typedef struct {
     RBNode node;
@@ -26,8 +26,7 @@ int depth(void *n) {
     return max(depth(node->entry.rbe_left), depth(node->entry.rbe_right)) + 1;
 }
 
-int main() {
-    printf("[TEST] rbtree\n");
+void basic_test() {
     RBTree tree = {NULL, cmpfunc, NULL};
     Int2IntRBNode *n;
 
@@ -56,7 +55,44 @@ int main() {
     }
 
     destroy_rb_tree(&tree, NULL);
+}
+
+void tree_map_basic_test() {
+    Int2IntTreeMap tree;
+    Int2IntTreeMap_init(&tree);
+
+    int a[5] = {1, 2, 3, 4, 5};
+    for (int i = 0; i < 5; i++) {
+        Int2IntTreeMap_insert(&tree, a[i], a[i]*2);
+    }
+
+    Int2IntTreeMapIter iter = Int2IntTreeMap_find(&tree, 3);
+    assert(iter->key == 3);
+    assert(iter->value == 6);
+
+    assert(*Int2IntTreeMap_get(&tree, 3) == 6);
+
+    Int2IntTreeMap_remove(&tree, iter);
+    free(iter);
+
+    iter = Int2IntTreeMap_min(&tree);
+    int expected[4] = {1, 2, 4, 5};
+    int i = 0;
+    for (; iter != NULL; iter = Int2IntTreeMap_next(&tree, iter)) {
+        assert(iter->key == expected[i]);
+        i++;
+    }
+    Int2IntTreeMap_free(&tree);
+}
+
+
+int main() {
+    printf("[TEST] rbtree\n");
+
+    basic_test();
+    tree_map_basic_test();
     test_largedata();
+
     printf("[PASS] rbtree\n");
     return 0;
 }

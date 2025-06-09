@@ -1,6 +1,7 @@
 #include "basic_traits.h"
 
 #include <string.h>
+#include <inttypes.h>
 
 #include "mmhash.h"
 
@@ -35,16 +36,16 @@ void Bool_show(Bool self, FILE* fp) {
     else fprintf(fp, "false");
 }
 void Int_show(Int self, FILE* fp) {
-    fprintf(fp, "%d", self);
+    fprintf(fp, "%"PRId32, self);
 }
 void Long_show(Long self, FILE* fp) {
-    fprintf(fp, "%lld", self);
+    fprintf(fp, "%"PRId64, self);
 }
 void UInt_show(UInt self, FILE* fp) {
-    fprintf(fp, "%ud", self);
+    fprintf(fp, "%"PRIu32, self);
 }
 void ULong_show(ULong self, FILE* fp) {
-    fprintf(fp, "%llud", self);
+    fprintf(fp, "%"PRIu64, self);
 }
 void VoidPtr_show(VoidPtr self, FILE* fp) {
     fprintf(fp, "%p", self);

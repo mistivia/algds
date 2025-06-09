@@ -1,14 +1,14 @@
-# Algorithms and Data Structures
+# Type-safe Generic Algorithms and Data Structures for C
 
-- Red-black tree
-- Augmented red-black tree
+- Generic Red-black tree
 - Generic Vector
 - Generic Priority queue
-- Murmur Hash
 - Generic Hash Table
+- Generic quick sort
+- Augmented red-black tree
+- Murmur Hash
 - String utilities
 - Region-based memory management
-- Generic quick sort
 
 ## Build
 

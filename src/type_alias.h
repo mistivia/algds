@@ -5,10 +5,10 @@
 #include <stdbool.h>
 
 typedef bool Bool;
-typedef int Int;
-typedef long long Long;
-typedef unsigned int UInt;
-typedef unsigned long long ULong;
+typedef int32_t Int;
+typedef int64_t Long;
+typedef uint32_t UInt;
+typedef uint64_t ULong;
 typedef char Char;
 typedef float Float;
 typedef double Double;

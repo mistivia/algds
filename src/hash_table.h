@@ -92,6 +92,7 @@ HASH_TABLE_DEF(Int, Int);
 HASH_TABLE_DEF(Int, Double);
 HASH_TABLE_DEF(VoidPtr, Int);
 HASH_TABLE_DEF(VoidPtr, String);
+HASH_TABLE_DEF(VoidPtr, VoidPtr);
 
 void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap);
 bool hash_table_insert(HashTable *ht, void *elem, uint64_t (*hash)(void*), bool (*eq)(void*, void*));

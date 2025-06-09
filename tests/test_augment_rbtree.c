@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "rb_tree.h"
+#include "tree_map.h"
 
 typedef struct {
     RBNode node;

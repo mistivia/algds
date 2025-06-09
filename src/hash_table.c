@@ -16,6 +16,7 @@ HASH_TABLE_IMPL(String, VoidPtr);
 HASH_TABLE_IMPL(Int, Int);
 HASH_TABLE_IMPL(Int, Double);
 HASH_TABLE_IMPL(VoidPtr, Int);
+HASH_TABLE_IMPL(VoidPtr, VoidPtr);
 HASH_TABLE_IMPL(VoidPtr, String);
 
 
