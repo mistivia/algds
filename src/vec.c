@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "basic_traits.h"
+
 VECTOR_IMPL(Int);
 VECTOR_IMPL(Bool);
 VECTOR_IMPL(Long);

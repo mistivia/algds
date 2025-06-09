@@ -10,6 +10,10 @@ int main() {
     IntVector_init(&vec);
 
     for (int i = 0; i < 1000; i++) {
+        if (i == 10) {
+            IntVector_show(&vec, stdout);
+            puts("");
+        }
         assert(vec.size == i);
         IntVector_push_back(&vec, i);
         assert(*(IntVector_end(&vec) - 1) == i);

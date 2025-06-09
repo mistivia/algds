@@ -1,13 +1,16 @@
 #ifndef ALGDS_BAISC_TRAITS_H_
 #define ALGDS_BAISC_TRAITS_H_
 
+#include <stdio.h>
+
 #include "type_alias.h"
 
 // basic traits
 #define BASIC_TRAITS_DEF(T) \
     Bool T##_eq(T lhs, T rhs); \
     Int T##_cmp(T lhs, T rhs); \
-    ULong T##_hash(T x);
+    uint64_t T##_hash(T x); \
+    void T##_show(T x, FILE* fp); \
 
 BASIC_TRAITS_DEF(Int);
 BASIC_TRAITS_DEF(Bool);

@@ -15,7 +15,7 @@
     } \
     uint64_t T##_hash(T x) { \
         return mmhash(&x, sizeof(T), 0); \
-    }
+    } \
 
 BASIC_TRAITS_IMPL(Char);
 BASIC_TRAITS_IMPL(Bool);
@@ -27,6 +27,38 @@ BASIC_TRAITS_IMPL(Double);
 BASIC_TRAITS_IMPL(Float);
 BASIC_TRAITS_IMPL(VoidPtr);
 
+void Char_show(Char self, FILE* fp) {
+    fprintf(fp, "%c", self);
+}
+void Bool_show(Bool self, FILE* fp) {
+    if (self) fprintf(fp, "true");
+    else fprintf(fp, "false");
+}
+void Int_show(Int self, FILE* fp) {
+    fprintf(fp, "%d", self);
+}
+void Long_show(Long self, FILE* fp) {
+    fprintf(fp, "%lld", self);
+}
+void UInt_show(UInt self, FILE* fp) {
+    fprintf(fp, "%ud", self);
+}
+void ULong_show(ULong self, FILE* fp) {
+    fprintf(fp, "%llud", self);
+}
+void VoidPtr_show(VoidPtr self, FILE* fp) {
+    fprintf(fp, "%p", self);
+}
+void Double_show(Double self, FILE* fp) {
+    fprintf(fp, "%lf", self);
+}
+void Float_show(Float self, FILE* fp) {
+    fprintf(fp, "%f", self);
+}
+void String_show(String self, FILE* fp) {
+    fprintf(fp, "%s", self);
+}
+
 bool String_eq(String lhs, String rhs) {
     return strcmp(lhs, rhs) == 0;
 }
@@ -35,7 +67,7 @@ int String_cmp(String lhs, String rhs) {
     return strcmp(lhs, rhs);
 }
 
-ULong String_hash(String x) {
+uint64_t String_hash(String x) {
     size_t len = strlen(x);
     return mmhash(x, len, 0);
 }

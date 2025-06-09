@@ -11,6 +11,9 @@ typedef Int MinInt;
 int MinInt_cmp(Int lhs, Int rhs) {
     return -Int_cmp(lhs, rhs);
 }
+void MinInt_show(Int self, FILE* fp) {
+    Int_show(self, fp);
+}
 
 VECTOR_DEF(MinInt);
 VECTOR_IMPL(MinInt);

@@ -6,7 +6,7 @@ ifeq ($(mode), debug)
 		-g \
 		-fsanitize=address
 else
-	cflags = -O2
+	cflags = -flto -O2
 endif
 
 src = $(shell ls src/*.c)
