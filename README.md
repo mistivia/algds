@@ -1,8 +1,9 @@
 # Type-safe Generic Algorithms and Data Structures for C
 
-- Generic Red-black tree
-- Generic Vector
-- Generic Priority queue
+- Generic red-black tree
+- Generic vector
+- Generic linked-list
+- Generic priority queue
 - Generic Hash Table
 - Generic quick sort
 - Augmented red-black tree
