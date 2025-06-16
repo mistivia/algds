@@ -16,11 +16,6 @@ tests=$(shell ls tests/*.c)
 tests_bin=$(tests:.c=.bin)
 
 all: libalgds.a
-	-rm -rf build/
-	-@mkdir -p build/include/algds/
-	-@mkdir -p build/lib
-	mv libalgds.a build/lib/
-	cp src/*.h build/include/algds
 
 libalgds.a: $(obj)
 	ar cr $@ $^
@@ -39,7 +34,6 @@ $(tests_bin):%.bin:%.c libalgds.a
 clean:
 	-rm $(shell find tests/ -name '*.bin')
 	-rm $(shell find . -name '*.o' -or -name '*.a' -or -name '*.d')
-	-rm -rf build
 
 DEPS := $(shell find . -name *.d)
 ifneq ($(DEPS),)
