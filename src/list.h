@@ -45,7 +45,7 @@ LIST_DEF(Int);
         self->vhead->next = self->vtail; \
         self->vhead->prev = NULL; \
         self->vtail->next = NULL; \
-        self->vhead->prev = self->vhead; \
+        self->vtail->prev = self->vhead; \
         self->len = 0; \
     } \
     void T##List_free(T##List *self) { \
@@ -118,10 +118,10 @@ LIST_DEF(Int);
         return self->len; \
     } \
     T##ListIter T##List_push_back(T##List *self, T val) { \
-        T##List_insert_before(self, self->vtail, val); \
+        return T##List_insert_before(self, self->vtail, val); \
     } \
     T##ListIter T##List_push_front(T##List *self, T val) { \
-        T##List_insert_after(self, self->vhead, val); \
+        return T##List_insert_after(self, self->vhead, val); \
     } \
     void T##List_pop_back(T##List *self) { \
         T##List_remove(self, self->vtail->prev); \
