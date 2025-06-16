@@ -16,6 +16,10 @@ tests=$(shell ls tests/*.c)
 tests_bin=$(tests:.c=.bin)
 
 all: libalgds.a
+	mkdir -p build/lib
+	mkdir -p build/include/algds
+	cp src/*.h build/include/algds
+	cp libalgds.a build/lib/
 
 libalgds.a: $(obj)
 	ar cr $@ $^
@@ -32,6 +36,7 @@ $(tests_bin):%.bin:%.c libalgds.a
 	$(cc) $(cflags) -Isrc/ $< libalgds.a -MD -MF $@.d -o $@
 
 clean:
+	-rm build/
 	-rm $(shell find tests/ -name '*.bin')
 	-rm $(shell find . -name '*.o' -or -name '*.a' -or -name '*.d')
 

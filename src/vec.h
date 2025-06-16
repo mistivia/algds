@@ -2,6 +2,7 @@
 #define ALGDS_VEC_H_
 
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 #include "type_alias.h"
