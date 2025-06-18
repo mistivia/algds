@@ -95,6 +95,7 @@
         } \
         fprintf(fp, "]"); \
     } \
+    size_t T##Vector_len(T##Vector *self) { return self->size; } \
     void T##Vector_free(T##Vector *self) { free(self->buffer); }
 
 VECTOR_DEF(Int);

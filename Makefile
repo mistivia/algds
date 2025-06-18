@@ -36,7 +36,7 @@ $(tests_bin):%.bin:%.c libalgds.a
 	$(cc) $(cflags) -Isrc/ $< libalgds.a -MD -MF $@.d -o $@
 
 clean:
-	-rm build/
+	-rm -rf build/
 	-rm $(shell find tests/ -name '*.bin')
 	-rm $(shell find . -name '*.o' -or -name '*.a' -or -name '*.d')
 
