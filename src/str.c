@@ -108,6 +108,7 @@ void str_builder_append(str_builder_t *sb, char *format, ...) {
     int size = vsnprintf(NULL, 0, format, va1);
     sb_reserve(sb, size);
     vsnprintf(sb->buf + sb->size, sb->cap - sb->size + 1, format, va2);
+    sb->size += size;
 }
 
 void str_builder_append_char(str_builder_t *sb, char c) {
