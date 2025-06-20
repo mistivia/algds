@@ -18,9 +18,11 @@
     void T##Vector_push_back(T##Vector *self, T elem); \
     void T##Vector_insert_before(T##Vector *self, int n, T elem); \
     void T##Vector_pop(T##Vector *self); \
+    bool T##Vector_empty(T##Vector *self); \
     void T##Vector_remove(T##Vector *self, size_t n); \
     size_t T##Vector_len(T##Vector *self); \
     T* T##Vector_begin(T##Vector *self); \
+    T* T##Vector_last(T##Vector *self); \
     T* T##Vector_end(T##Vector *self); \
     T* T##Vector_ref(T##Vector *self, size_t n); \
     void T##Vector_swap(T##Vector *self, int i, int j); \
@@ -69,7 +71,9 @@
         self->size -= 1; \
     } \
     T* T##Vector_begin(T##Vector *self) { return self->buffer; } \
+    bool T##Vector_empty(T##Vector *self) { return self->size == 0; } \
     T* T##Vector_end(T##Vector *self) { return self->buffer + self->size; } \
+    T* T##Vector_last(T##Vector *self) { return self->buffer + self->size - 1; } \
     T* T##Vector_ref(T##Vector *self, size_t n) { return self->buffer + n; } \
     void T##Vector_swap(T##Vector *self, int i, int j) { \
         T buf; \
