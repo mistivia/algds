@@ -58,6 +58,7 @@
                     self->buffer + n, \
                     sizeof(T) * (self->size - n)); \
             self->buffer[n] = elem; \
+            self->size += 1; \
         } \
     } \
     void T##Vector_pop(T##Vector *self) { \
