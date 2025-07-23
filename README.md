@@ -10,9 +10,10 @@
 - Murmur Hash
 - String utilities
 
-## Build
+## Build & Install
 
     make
+    make install
 
 ## Run Tests
 
