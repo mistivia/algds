@@ -6,7 +6,7 @@ ifeq ($(mode), debug)
 		-g \
 		-fsanitize=address
 else
-	cflags = -flto -O2
+	cflags = -O2
 endif
 
 src = $(shell ls *.c)
@@ -19,6 +19,11 @@ all: libalgds.a
 
 libalgds.a: $(obj)
 	ar cr $@ $^
+
+install: libalgds.a
+	sudo mkdir -p /usr/local/include/algds
+	sudo cp *.h /usr/local/include/algds
+	sudo cp libalgds.a /usr/local/lib
 
 test: $(tests_bin)
 	@echo
@@ -36,7 +41,7 @@ clean:
 	-rm $(shell find tests/ -name '*.bin')
 	-rm $(shell find . -name '*.o' -or -name '*.a' -or -name '*.d')
 
-DEPS := $(shell find . -name *.d)
+DEPS := $(shell find . -name '*.d')
 ifneq ($(DEPS),)
 include $(DEPS)
 endif
