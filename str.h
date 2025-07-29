@@ -13,7 +13,15 @@ struct str_builder {
     int cap;
 };
 typedef struct str_builder str_builder_t;
+typedef struct str_builder StrBuilder;
 
+void StrBuilder_init(StrBuilder* self);
+void StrBuilder_append(StrBuilder *self, char *format, ...);
+void StrBuilder_append_char(StrBuilder *self, char c);
+StrBuilder StrBuilder_move(StrBuilder* self);
+void StrBuilder_free(StrBuilder* self);
+
+// legacy
 void init_str_builder(str_builder_t *sb);
 void str_builder_append(str_builder_t *sb, char *format, ...);
 void str_builder_append_char(str_builder_t *sb, char c);

@@ -84,6 +84,26 @@ char *str_strip(char *str) {
     memcpy(buf, begin, len);
     return buf;
 }
+void StrBuilder_init(StrBuilder* self) {
+    init_str_builder(self);
+}
+
+void StrBuilder_free(StrBuilder* self) {
+    free(self->buf);
+}
+
+StrBuilder StrBuilder_move(StrBuilder* self) {
+    StrBuilder neo;
+    neo.buf = self->buf;
+    self->buf = NULL;
+    self->cap = 0;
+    self->size = 0;
+    return neo;
+}
+
+void StrBuilder_append_char(StrBuilder *sb, char c) {
+    str_builder_append_char(sb, c);
+}
 
 void init_str_builder(str_builder_t *sb) {
     *sb = (str_builder_t){.size = 0, .cap = 16};
@@ -98,6 +118,17 @@ static void sb_reserve(str_builder_t *sb, int extra) {
     sb->buf = realloc(sb->buf, new_cap + 1);
     memset(sb->buf + sb->cap, 0, new_cap - sb->cap + 1);
     sb->cap = new_cap;
+}
+
+void StrBuilder_append(StrBuilder *sb, char *format, ...) {
+    va_list va1;
+    va_list va2;
+    va_start(va1, format);
+    va_copy(va2, va1);
+    int size = vsnprintf(NULL, 0, format, va1);
+    sb_reserve(sb, size);
+    vsnprintf(sb->buf + sb->size, sb->cap - sb->size + 1, format, va2);
+    sb->size += size;
 }
 
 void str_builder_append(str_builder_t *sb, char *format, ...) {
