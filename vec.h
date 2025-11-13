@@ -27,7 +27,7 @@
     T* T##Vector_ref(T##Vector *self, size_t n); \
     void T##Vector_swap(T##Vector *self, int i, int j); \
     T##Vector T##Vector_move(T##Vector *self); \
-    void T##Vector_show(T##Vector *self, FILE* fp); \
+    void T##Vector_show(T##Vector self, FILE* fp); \
     void T##Vector_free(T##Vector *self);
 
 #define VECTOR_IMPL(T) \
@@ -89,14 +89,14 @@
         self->cap = 0; \
         return dup; \
     } \
-    void T##Vector_show(T##Vector *self, FILE* fp) { \
+    void T##Vector_show(T##Vector self, FILE* fp) { \
         fprintf(fp, "["); \
-        for (int i = 0; i < self->size-1; i++) { \
-            T##_show(self->buffer[i], fp); \
+        for (int i = 0; i < self.size-1; i++) { \
+            T##_show(self.buffer[i], fp); \
             fprintf(fp, ", "); \
         } \
-        if (self->size > 1) { \
-            T##_show(self->buffer[self->size - 1], fp); \
+        if (self.size > 0) { \
+            T##_show(self.buffer[self.size - 1], fp); \
         } \
         fprintf(fp, "]"); \
     } \

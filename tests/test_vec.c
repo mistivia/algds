@@ -11,7 +11,7 @@ int main() {
 
     for (int i = 0; i < 1000; i++) {
         if (i == 10) {
-            IntVector_show(&vec, stdout);
+            IntVector_show(vec, stdout);
             puts("");
         }
         assert(vec.size == i);
