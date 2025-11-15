@@ -2,9 +2,7 @@ mode ?= debug
 
 cc = gcc
 ifeq ($(mode), debug)
-	cflags = \
-		-g \
-		-fsanitize=address
+	cflags = -g
 else
 	cflags = -O2
 endif
