@@ -21,7 +21,7 @@
     } T##List; \
     void T##List_init(T##List *self); \
     void T##List_free(T##List *self); \
-    void T##List_move(T##List *self); \
+    T##List T##List_move(T##List *self); \
     T##ListIter T##List_insert_before(T##List *self, T##ListIter iter, T val); \
     T##ListIter T##List_insert_after(T##List *self, T##ListIter iter, T val); \
     void T##List_remove(T##List *self, T##ListIter iter); \
@@ -56,7 +56,7 @@ LIST_DEF(Int);
             cur = next; \
         } \
     } \
-    void T##List_move(T##List *self) { \
+    T##List T##List_move(T##List *self) { \
         T##List dup; \
         dup.vhead = self->vhead; \
         dup.vtail = self->vtail; \
@@ -64,6 +64,7 @@ LIST_DEF(Int);
         self->vhead = NULL; \
         self->vtail = NULL; \
         self->len = 0; \
+        return dup; \
     } \
     T##ListIter T##List_insert_before(T##List *self, T##ListIter iter, T val) { \
         if (iter->prev == NULL) return NULL; \

@@ -1,10 +1,23 @@
 mode ?= debug
 
+# https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++.html
+common_cflags = -Wall -Wno-sign-conversion -Wno-conversion -Wformat -Wformat=2 \
+	-Werror=format-security \
+	-D_GLIBCXX_ASSERTIONS \
+	-fstrict-flex-arrays=3 \
+	-fstack-clash-protection -fstack-protector-strong \
+	-Wtrampolines -fzero-init-padding-bits=all \
+	-Wbidi-chars=any \
+	-Werror=implicit -Werror=incompatible-pointer-types -Werror=int-conversion \
+	-fexceptions
+
 cc = gcc
 ifeq ($(mode), debug)
-	cflags = -g
+	cflags = $(common_cflags) -g -Werror
 else
-	cflags = -O2
+	cflags = $(common_cflags) -O2 \
+		-fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -ftrivial-auto-var-init=zero \
+		-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3
 endif
 
 src = $(shell ls *.c)
