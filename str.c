@@ -153,9 +153,17 @@ char *fgetline(FILE *fp) {
     init_str_builder(&sb);
     while (true) {
         int c = fgetc(fp);
-        if (c == EOF && sb.size == 0) return NULL;
-        if (c != EOF) str_builder_append_char(&sb, c);
-        if (c == EOF || c == '\n') return sb.buf;
+        if (c == EOF && sb.size == 0) {
+            free(sb.buf);
+            return NULL;
+        }
+        if (c != EOF) {
+            str_builder_append_char(&sb, c);
+        }
+        if (c == EOF || c == '\n') {
+            str_builder_append_char(&sb, '\0');
+            return sb.buf;
+        }
     }
     return NULL;
 }
