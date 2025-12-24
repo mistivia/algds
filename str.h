@@ -15,6 +15,7 @@ struct str_builder {
 typedef struct str_builder str_builder_t;
 typedef struct str_builder StrBuilder;
 
+StrBuilder StrBuilder_create();
 void StrBuilder_init(StrBuilder* self);
 void StrBuilder_append(StrBuilder *self, char *format, ...);
 void StrBuilder_append_char(StrBuilder *self, char c);

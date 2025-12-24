@@ -15,6 +15,7 @@
     } T##Vector; \
     \
     void T##Vector_init(T##Vector *self); \
+    T##Vector T##Vector_create(); \
     void T##Vector_push_back(T##Vector *self, T elem); \
     void T##Vector_insert_before(T##Vector *self, int n, T elem); \
     void T##Vector_pop(T##Vector *self); \
@@ -36,7 +37,11 @@
         self->cap = 16; \
         self->size = 0; \
     } \
-    \
+    T##Vector T##Vector_create() { \
+        T##Vector self; \
+        T##Vector_init(&self); \
+        return self; \
+    } \
     void T##Vector_push_back(T##Vector *self, T elem) { \
         if (self->size + 1 > self->cap) { \
             self->buffer = realloc(self->buffer, sizeof(T) * self->cap * 2); \

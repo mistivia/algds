@@ -41,6 +41,7 @@
         RBTree tree; \
     } K##2##V##TreeMap; \
     void K##2##V##TreeMap_init(K##2##V##TreeMap *self); \
+    K##2##V##TreeMap K##2##V##TreeMap_create(); \
     K##2##V##TreeMapIter K##2##V##TreeMap_insert(K##2##V##TreeMap *self, K key, V value); \
     K##2##V##TreeMapIter K##2##V##TreeMap_find(K##2##V##TreeMap *self, K key); \
     V* K##2##V##TreeMap_get(K##2##V##TreeMap *self, K key); \
@@ -62,6 +63,11 @@
         self->tree.rbh_root = NULL; \
         self->tree.cmp = K##2##V##TreeMap_cmp; \
         self->tree.augment = NULL; \
+    } \
+    K##2##V##TreeMap K##2##V##TreeMap_create() { \
+        K##2##V##TreeMap self; \
+        K##2##V##TreeMap_init(&self); \
+        return self; \
     } \
     K##2##V##TreeMapIter K##2##V##TreeMap_insert(K##2##V##TreeMap *self, K key, V value) { \
         K##2##V##TreeMapNode *newnode = malloc(sizeof(K##2##V##TreeMapNode)); \

@@ -26,6 +26,7 @@ typedef struct hash_table HashTable;
         HashTable ht; \
     } K##2##V##HashTable; \
     void K##2##V##HashTable_init(K##2##V##HashTable *self); \
+    K##2##V##HashTable K##2##V##HashTable_create(); \
     bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K key, V value); \
     void K##2##V##HashTable_remove(K##2##V##HashTable *ht, K##2##V##HashTableIter iter); \
     V* K##2##V##HashTable_get(K##2##V##HashTable *self, K key); \
@@ -46,6 +47,11 @@ typedef struct hash_table HashTable;
     } \
     void K##2##V##HashTable_init(K##2##V##HashTable *self) { \
         init_hash_table(&self->ht, sizeof(K##2##V##HashTableEntry), 16); \
+    } \
+    K##2##V##HashTable K##2##V##HashTable_create() { \
+        K##2##V##HashTable self; \
+        K##2##V##HashTable_init(&self); \
+        return self; \
     } \
     bool K##2##V##HashTable_insert(K##2##V##HashTable *self, K key, V value) { \
         K##2##V##HashTableEntry entry; \

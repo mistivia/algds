@@ -84,8 +84,15 @@ char *str_strip(char *str) {
     memcpy(buf, begin, len);
     return buf;
 }
+
 void StrBuilder_init(StrBuilder* self) {
     init_str_builder(self);
+}
+
+StrBuilder StrBuilder_create() {
+    StrBuilder self;
+    StrBuilder_init(&self);
+    return self;
 }
 
 void StrBuilder_free(StrBuilder* self) {

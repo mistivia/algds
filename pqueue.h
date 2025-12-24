@@ -8,6 +8,7 @@
         T##Vector vec; \
     } T##PQueue; \
     void T##PQueue_init(T##PQueue *self); \
+    T##PQueue T##PQueue_create(); \
     void T##PQueue_push(T##PQueue *self, T elem); \
     void T##PQueue_pop(T##PQueue *self); \
     T* T##PQueue_top(T##PQueue *self); \
@@ -31,6 +32,11 @@ PQUEUE_DEF(VoidPtr);
     } \
     void T##PQueue_init(T##PQueue *self) { \
          T##Vector_init(&self->vec); \
+    } \
+    T##PQueue T##PQueue_create() { \
+        T##PQueue self; \
+        T##PQueue_init(&self); \
+        return self; \
     } \
     void T##PQueue_push(T##PQueue *self, T elem) { \
         T##Vector_push_back(&self->vec, elem); \

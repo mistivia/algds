@@ -20,6 +20,7 @@
         size_t len; \
     } T##List; \
     void T##List_init(T##List *self); \
+    T##List T##List_create(); \
     void T##List_free(T##List *self); \
     T##List T##List_move(T##List *self); \
     T##ListIter T##List_insert_before(T##List *self, T##ListIter iter, T val); \
@@ -47,6 +48,11 @@ LIST_DEF(Int);
         self->vtail->next = NULL; \
         self->vtail->prev = self->vhead; \
         self->len = 0; \
+    } \
+    T##List T##List_create() { \
+        T##List self; \
+        T##List_init(&self); \
+        return self; \
     } \
     void T##List_free(T##List *self) { \
         T##ListIter cur = self->vhead; \
