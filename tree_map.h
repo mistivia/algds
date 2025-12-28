@@ -30,83 +30,87 @@
 
 #include "type_alias.h"
 
-#define TREE_MAP_DEF(K, V) \
+#define TREE_MAP_DEF_AS(K, V, A) \
     typedef struct { \
         RBNode rbnode; \
         K key; \
         V value; \
-    } K##2##V##TreeMapNode; \
-    typedef K##2##V##TreeMapNode *K##2##V##TreeMapIter; \
+    } A##Node; \
+    typedef A##Node *A##Iter; \
     typedef struct { \
         RBTree tree; \
-    } K##2##V##TreeMap; \
-    void K##2##V##TreeMap_init(K##2##V##TreeMap *self); \
-    K##2##V##TreeMap K##2##V##TreeMap_create(); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_insert(K##2##V##TreeMap *self, K key, V value); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_find(K##2##V##TreeMap *self, K key); \
-    V* K##2##V##TreeMap_get(K##2##V##TreeMap *self, K key); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_next(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_min(K##2##V##TreeMap *self); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_max(K##2##V##TreeMap *self); \
-    void K##2##V##TreeMap_remove(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_left(K##2##V##TreeMapIter iter); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_right(K##2##V##TreeMapIter iter); \
-    K##2##V##TreeMapIter K##2##V##TreeMap_parent(K##2##V##TreeMapIter iter); \
-    void K##2##V##TreeMap_free(K##2##V##TreeMap *self); \
+    } A; \
+    void A##_init(A *self); \
+    A A##_create(); \
+    A##Iter A##_insert(A *self, K key, V value); \
+    A##Iter A##_find(A *self, K key); \
+    V* A##_get(A *self, K key); \
+    A##Iter A##_next(A *self, A##Iter iter); \
+    A##Iter A##_min(A *self); \
+    A##Iter A##_max(A *self); \
+    void A##_remove(A *self, A##Iter iter); \
+    A##Iter A##_left(A##Iter iter); \
+    A##Iter A##_right(A##Iter iter); \
+    A##Iter A##_parent(A##Iter iter); \
+    void A##_free(A *self);
 
-#define TREE_MAP_IMPL(K, V) \
-    static int K##2##V##TreeMap_cmp(void *vlhs, void *vrhs) { \
+#define TREE_MAP_DEF(K, V) TREE_MAP_DEF_AS(K, V, K##2##V##TreeMap)
+
+#define TREE_MAP_IMPL_AS(K, V, A) \
+    static inline int A##_cmp(void *vlhs, void *vrhs) { \
         K *lhs = vlhs, *rhs = vrhs; \
         return K##_cmp(*lhs, *rhs); \
     } \
-    void K##2##V##TreeMap_init(K##2##V##TreeMap *self) { \
+    void A##_init(A *self) { \
         self->tree.rbh_root = NULL; \
-        self->tree.cmp = K##2##V##TreeMap_cmp; \
+        self->tree.cmp = A##_cmp; \
         self->tree.augment = NULL; \
     } \
-    K##2##V##TreeMap K##2##V##TreeMap_create() { \
-        K##2##V##TreeMap self; \
-        K##2##V##TreeMap_init(&self); \
+    A A##_create() { \
+        A self; \
+        A##_init(&self); \
         return self; \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_insert(K##2##V##TreeMap *self, K key, V value) { \
-        K##2##V##TreeMapNode *newnode = malloc(sizeof(K##2##V##TreeMapNode)); \
+    A##Iter A##_insert(A *self, K key, V value) { \
+        A##Node *newnode = malloc(sizeof(A##Node)); \
         newnode->key = key; \
         newnode->value = value; \
         return rb_tree_insert(&self->tree, newnode); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_find(K##2##V##TreeMap *self, K key) { \
+    A##Iter A##_find(A *self, K key) { \
         return rb_tree_find(&self->tree, &key); \
     } \
-    V* K##2##V##TreeMap_get(K##2##V##TreeMap *self, K key) { \
-        K##2##V##TreeMapIter iter = rb_tree_find(&self->tree, &key); \
+    V* A##_get(A *self, K key) { \
+        A##Iter iter = rb_tree_find(&self->tree, &key); \
         if (iter == NULL) return NULL; \
         return &iter->value; \
     } \
-    void K##2##V##TreeMap_remove(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter) { \
+    void A##_remove(A *self, A##Iter iter) { \
         rb_tree_remove(&self->tree, iter); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_next(K##2##V##TreeMap *self, K##2##V##TreeMapIter iter) { \
+    A##Iter A##_next(A *self, A##Iter iter) { \
         return rb_tree_next(&self->tree, iter); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_min(K##2##V##TreeMap *self) { \
+    A##Iter A##_min(A *self) { \
         return rb_tree_min(&self->tree); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_max(K##2##V##TreeMap *self) { \
+    A##Iter A##_max(A *self) { \
         return rb_tree_max(&self->tree); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_left(K##2##V##TreeMapIter iter) { \
+    A##Iter A##_left(A##Iter iter) { \
         return rb_tree_left(iter); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_right(K##2##V##TreeMapIter iter) { \
+    A##Iter A##_right(A##Iter iter) { \
         return rb_tree_right(iter); \
     } \
-    K##2##V##TreeMapIter K##2##V##TreeMap_parent(K##2##V##TreeMapIter iter) { \
+    A##Iter A##_parent(A##Iter iter) { \
         return rb_tree_parent(iter); \
     } \
-    void K##2##V##TreeMap_free(K##2##V##TreeMap *self) { \
+    void A##_free(A *self) { \
         return destroy_rb_tree(&self->tree, NULL); \
-    } \
+    }
+
+#define TREE_MAP_IMPL(K, V) TREE_MAP_IMPL_AS(K, V, K##2##V##TreeMap)
 
 struct rb_node {
     struct {

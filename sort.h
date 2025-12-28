@@ -10,7 +10,7 @@
     void T##_qsort(T* arr, int n);
 
 #define QSORT_IMPL(T) \
-    void T##_qsort_swap(T* arr, int lhs, int rhs) { \
+    static inline void T##_qsort_swap(T* arr, int lhs, int rhs) { \
         if (lhs == rhs) return; \
         T buf; \
         buf = arr[lhs]; \
