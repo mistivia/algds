@@ -7,42 +7,44 @@
 
 #include "type_alias.h"
 
-#define VECTOR_DEF(T) \
+#define VECTOR_DEF_AS(T, A) \
     typedef struct { \
         T* buffer; \
         int size; \
         int cap; \
-    } T##Vector; \
+    } A; \
     \
-    void T##Vector_init(T##Vector *self); \
-    T##Vector T##Vector_create(); \
-    void T##Vector_push_back(T##Vector *self, T elem); \
-    void T##Vector_insert_before(T##Vector *self, int n, T elem); \
-    void T##Vector_pop(T##Vector *self); \
-    bool T##Vector_empty(T##Vector *self); \
-    void T##Vector_remove(T##Vector *self, size_t n); \
-    size_t T##Vector_len(T##Vector *self); \
-    T* T##Vector_begin(T##Vector *self); \
-    T* T##Vector_last(T##Vector *self); \
-    T* T##Vector_end(T##Vector *self); \
-    T* T##Vector_ref(T##Vector *self, size_t n); \
-    void T##Vector_swap(T##Vector *self, int i, int j); \
-    T##Vector T##Vector_move(T##Vector *self); \
-    void T##Vector_show(T##Vector self, FILE* fp); \
-    void T##Vector_free(T##Vector *self);
+    void A##_init(A *self); \
+    A A##_create(); \
+    void A##_push_back(A *self, T elem); \
+    void A##_insert_before(A *self, int n, T elem); \
+    void A##_pop(A *self); \
+    bool A##_empty(A *self); \
+    void A##_remove(A *self, size_t n); \
+    size_t A##_len(A *self); \
+    T* A##_begin(A *self); \
+    T* A##_last(A *self); \
+    T* A##_end(A *self); \
+    T* A##_ref(A *self, size_t n); \
+    void A##_swap(A *self, int i, int j); \
+    A A##_move(A *self); \
+    void A##_show(A self, FILE* fp); \
+    void A##_free(A *self);
 
-#define VECTOR_IMPL(T) \
-    void T##Vector_init(T##Vector *self) { \
+#define VECTOR_DEF(T) VECTOR_DEF_AS(T, T##Vector)
+
+#define VECTOR_IMPL_AS(T, A) \
+    void A##_init(A *self) { \
         self->buffer = (T*)malloc(sizeof(T) * 16); \
         self->cap = 16; \
         self->size = 0; \
     } \
-    T##Vector T##Vector_create() { \
-        T##Vector self; \
-        T##Vector_init(&self); \
+    A A##_create() { \
+        A self; \
+        A##_init(&self); \
         return self; \
     } \
-    void T##Vector_push_back(T##Vector *self, T elem) { \
+    void A##_push_back(A *self, T elem) { \
         if (self->size + 1 > self->cap) { \
             self->buffer = realloc(self->buffer, sizeof(T) * self->cap * 2); \
             self->cap *= 2; \
@@ -50,7 +52,7 @@
         self->buffer[self->size] = elem; \
         self->size += 1; \
     } \
-    void T##Vector_insert_before(T##Vector *self, int n, T elem) { \
+    void A##_insert_before(A *self, int n, T elem) { \
         if (n < 0 || n > self->size) { \
             return; \
         } \
@@ -66,35 +68,35 @@
             self->size += 1; \
         } \
     } \
-    void T##Vector_pop(T##Vector *self) { \
+    void A##_pop(A *self) { \
         self->size -= 1; \
     } \
-    void T##Vector_remove(T##Vector *self, size_t n) { \
+    void A##_remove(A *self, size_t n) { \
         if (n < 0 || n >= self->size) return; \
         memmove(self->buffer + n, \
                 self->buffer + n + 1, \
                 sizeof(T) * self->size - n - 1); \
         self->size -= 1; \
     } \
-    T* T##Vector_begin(T##Vector *self) { return self->buffer; } \
-    bool T##Vector_empty(T##Vector *self) { return self->size == 0; } \
-    T* T##Vector_end(T##Vector *self) { return self->buffer + self->size; } \
-    T* T##Vector_last(T##Vector *self) { return self->buffer + self->size - 1; } \
-    T* T##Vector_ref(T##Vector *self, size_t n) { return self->buffer + n; } \
-    void T##Vector_swap(T##Vector *self, int i, int j) { \
+    T* A##_begin(A *self) { return self->buffer; } \
+    bool A##_empty(A *self) { return self->size == 0; } \
+    T* A##_end(A *self) { return self->buffer + self->size; } \
+    T* A##_last(A *self) { return self->buffer + self->size - 1; } \
+    T* A##_ref(A *self, size_t n) { return self->buffer + n; } \
+    void A##_swap(A *self, int i, int j) { \
         T buf; \
         memcpy(&buf, self->buffer + i, sizeof(T)); \
         memcpy(self->buffer + i, self->buffer + j, sizeof(T)); \
         memcpy(self->buffer + j, &buf, sizeof(T)); \
     } \
-    T##Vector T##Vector_move(T##Vector *self) { \
-        T##Vector dup = *self; \
+    A A##_move(A *self) { \
+        A dup = *self; \
         self->buffer = NULL; \
         self->size = 0; \
         self->cap = 0; \
         return dup; \
     } \
-    void T##Vector_show(T##Vector self, FILE* fp) { \
+    void A##_show(A self, FILE* fp) { \
         fprintf(fp, "["); \
         for (int i = 0; i < self.size-1; i++) { \
             T##_show(self.buffer[i], fp); \
@@ -105,8 +107,10 @@
         } \
         fprintf(fp, "]"); \
     } \
-    size_t T##Vector_len(T##Vector *self) { return self->size; } \
-    void T##Vector_free(T##Vector *self) { free(self->buffer); }
+    size_t A##_len(A *self) { return self->size; } \
+    void A##_free(A *self) { free(self->buffer); }
+
+#define VECTOR_IMPL(T) VECTOR_IMPL_AS(T, T##Vector)
 
 VECTOR_DEF(Int);
 VECTOR_DEF(Bool);
