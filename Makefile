@@ -26,10 +26,10 @@ obj = $(src:.c=.o)
 tests=$(shell ls tests/*.c)
 tests_bin=$(tests:.c=.bin)
 
-all: libalgds.a
-
 libalgds.a: $(obj)
 	ar cr $@ $^
+
+all: libalgds.a $(tests_bin)
 
 install: libalgds.a
 	sudo mkdir -p /usr/local/include/algds

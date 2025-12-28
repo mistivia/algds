@@ -3,9 +3,10 @@
 
 #include "vec.h"
 
-#define PQUEUE_DEF_AS(T, TV, A) \
+#define PQUEUE_DEF_AS(T, A) \
+    VECTOR_DEF_AS(T, A##Vec_); \
     typedef struct { \
-        TV vec; \
+        A##Vec_ vec; \
     } A; \
     void A##_init(A *self); \
     A A##_create(); \
@@ -15,7 +16,7 @@
     A A##_move(A *self); \
     void A##_free(A *self);
 
-#define PQUEUE_DEF(T) PQUEUE_DEF_AS(T, T##Vector, T##PQueue)
+#define PQUEUE_DEF(T) PQUEUE_DEF_AS(T, T##PQueue)
 
 PQUEUE_DEF(Int);
 PQUEUE_DEF(Bool);
@@ -28,12 +29,13 @@ PQUEUE_DEF(Float);
 PQUEUE_DEF(String);
 PQUEUE_DEF(VoidPtr);
 
-#define PQUEUE_IMPL_AS(T, TV, A) \
+#define PQUEUE_IMPL_AS(T, A) \
+    VECTOR_IMPL_AS(T, A##Vec_); \
     static int A##_cmp(A *self, int a, int b) { \
-        return T##_cmp(*TV##_ref(&self->vec, a), *TV##_ref(&self->vec, b)); \
+        return T##_cmp(*A##Vec__ref(&self->vec, a), *A##Vec__ref(&self->vec, b)); \
     } \
     void A##_init(A *self) { \
-         TV##_init(&self->vec); \
+         A##Vec__init(&self->vec); \
     } \
     A A##_create() { \
         A self; \
@@ -41,10 +43,10 @@ PQUEUE_DEF(VoidPtr);
         return self; \
     } \
     void A##_push(A *self, T elem) { \
-        TV##_push_back(&self->vec, elem); \
+        A##Vec__push_back(&self->vec, elem); \
         int i = self->vec.size - 1; \
         while (i > 0 && A##_cmp(self, i, i / 2) > 0) { \
-            TV##_swap(&self->vec, i, i / 2); \
+            A##Vec__swap(&self->vec, i, i / 2); \
             i /= 2; \
         } \
     } \
@@ -61,14 +63,14 @@ PQUEUE_DEF(VoidPtr);
             largest = right; \
         } \
         if (largest != idx) { \
-            TV##_swap(&self->vec, largest, idx); \
+            A##Vec__swap(&self->vec, largest, idx); \
             A##_heapify(self, largest); \
         } \
     } \
     void A##_pop(A *self) { \
         if (self->vec.size == 0) return; \
-        memcpy(TV##_ref(&self->vec, 0), TV##_ref(&self->vec, self->vec.size - 1), sizeof(T)); \
-        TV##_pop(&self->vec); \
+        memcpy(A##Vec__ref(&self->vec, 0), A##Vec__ref(&self->vec, self->vec.size - 1), sizeof(T)); \
+        A##Vec__pop(&self->vec); \
         A##_heapify(self, 0); \
     } \
     T* A##_top(A *self) { \
@@ -77,13 +79,13 @@ PQUEUE_DEF(VoidPtr);
     } \
     A A##_move(A *self) { \
         A dup; \
-        dup.vec = TV##_move(&self->vec); \
+        dup.vec = A##Vec__move(&self->vec); \
         return dup; \
     } \
     void A##_free(A *self) { \
-        TV##_free(&self->vec); \
+        A##Vec__free(&self->vec); \
     }
 
-#define PQUEUE_IMPL(T) PQUEUE_IMPL_AS(T, T##Vector, T##PQueue)
+#define PQUEUE_IMPL(T) PQUEUE_IMPL_AS(T, T##PQueue)
 
 #endif

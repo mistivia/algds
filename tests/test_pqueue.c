@@ -15,9 +15,6 @@ void MinInt_show(Int self, FILE* fp) {
     Int_show(self, fp);
 }
 
-VECTOR_DEF(MinInt);
-VECTOR_IMPL(MinInt);
-
 PQUEUE_DEF(MinInt);
 PQUEUE_IMPL(MinInt);
 
@@ -51,7 +48,7 @@ int main() {
         MinIntPQueue_pop(&minpq);
     }
     assert(MinIntPQueue_top(&minpq) == NULL);
-    MinIntVector_free(&minpq.vec);
+    MinIntPQueue_free(&minpq);
 
     int elems2[10] = {-10, -8, -7, -9, -5, -6, -4, -2, -3, -1};
     int expected[10] = {-10, -8, -7, -7, -5, -5, -4, -2, -2, -1};
@@ -61,7 +58,7 @@ int main() {
         int *top = IntPQueue_top(&pq);
         assert(*top == expected[i]);
     }
-    IntVector_free(&pq.vec);
+    IntPQueue_free(&pq);
     printf("[PASS] pqueue\n");
     return 0;
 }
