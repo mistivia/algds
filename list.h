@@ -6,64 +6,75 @@
 #include "type_alias.h"
 
 
-#define LIST_DEF(T) \
-    struct T##List_node { \
+#define LIST_DEF_AS(T, A) \
+    struct A##_node { \
         T val; \
-        struct T##List_node *prev; \
-        struct T##List_node *next; \
+        struct A##_node *prev; \
+        struct A##_node *next; \
     }; \
-    typedef struct T##List_node T##ListNode; \
-    typedef T##ListNode *T##ListIter; \
+    typedef struct A##_node A##Node_; \
+    typedef A##Node_ *A##Iter; \
     typedef struct { \
-        T##ListNode *vhead; \
-        T##ListNode *vtail; \
+        A##Node_ *vhead; \
+        A##Node_ *vtail; \
         size_t len; \
-    } T##List; \
-    void T##List_init(T##List *self); \
-    T##List T##List_create(); \
-    void T##List_free(T##List *self); \
-    T##List T##List_move(T##List *self); \
-    T##ListIter T##List_insert_before(T##List *self, T##ListIter iter, T val); \
-    T##ListIter T##List_insert_after(T##List *self, T##ListIter iter, T val); \
-    void T##List_remove(T##List *self, T##ListIter iter); \
-    T##ListIter T##List_begin(T##List *self); \
-    T##ListIter T##List_last(T##List *self); \
-    T##ListIter T##List_end(T##List *self); \
-    T##ListIter T##List_next(T##ListIter iter); \
-    T##ListIter T##List_prev(T##ListIter iter); \
-    size_t T##List_len(T##List *self); \
-    T##ListIter T##List_push_back(T##List *self, T val); \
-    T##ListIter T##List_push_front(T##List *self, T val); \
-    void T##List_pop_back(T##List *self); \
-    void T##List_pop_front(T##List *self); \
+    } A; \
+    void A##_init(A *self); \
+    A A##_create(); \
+    void A##_free(A *self); \
+    A A##_move(A *self); \
+    A##Iter A##_insert_before(A *self, A##Iter iter, T val); \
+    A##Iter A##_insert_after(A *self, A##Iter iter, T val); \
+    void A##_remove(A *self, A##Iter iter); \
+    A##Iter A##_begin(A *self); \
+    A##Iter A##_last(A *self); \
+    A##Iter A##_end(A *self); \
+    A##Iter A##_next(A##Iter iter); \
+    A##Iter A##_prev(A##Iter iter); \
+    size_t A##_len(A *self); \
+    A##Iter A##_push_back(A *self, T val); \
+    A##Iter A##_push_front(A *self, T val); \
+    void A##_pop_back(A *self); \
+    void A##_pop_front(A *self);
+
+#define LIST_DEF(T) LIST_DEF_AS(T, T##List)
 
 LIST_DEF(Int);
+LIST_DEF(Bool);
+LIST_DEF(Long);
+LIST_DEF(Char);
+LIST_DEF(UInt);
+LIST_DEF(ULong);
+LIST_DEF(Double);
+LIST_DEF(Float);
+LIST_DEF(String);
+LIST_DEF(VoidPtr);
 
-#define LIST_IMPL(T) \
-    void T##List_init(T##List *self) { \
-        self->vhead = malloc(sizeof(T##ListNode)); \
-        self->vtail = malloc(sizeof(T##ListNode)); \
+#define LIST_IMPL_AS(T, A) \
+    void A##_init(A *self) { \
+        self->vhead = malloc(sizeof(A##Node_)); \
+        self->vtail = malloc(sizeof(A##Node_)); \
         self->vhead->next = self->vtail; \
         self->vhead->prev = NULL; \
         self->vtail->next = NULL; \
         self->vtail->prev = self->vhead; \
         self->len = 0; \
     } \
-    T##List T##List_create() { \
-        T##List self; \
-        T##List_init(&self); \
+    A A##_create() { \
+        A self; \
+        A##_init(&self); \
         return self; \
     } \
-    void T##List_free(T##List *self) { \
-        T##ListIter cur = self->vhead; \
+    void A##_free(A *self) { \
+        A##Iter cur = self->vhead; \
         while (cur != NULL) { \
-            T##ListIter next = cur->next; \
+            A##Iter next = cur->next; \
             free(cur); \
             cur = next; \
         } \
     } \
-    T##List T##List_move(T##List *self) { \
-        T##List dup; \
+    A A##_move(A *self) { \
+        A dup; \
         dup.vhead = self->vhead; \
         dup.vtail = self->vtail; \
         dup.len = self->len; \
@@ -72,9 +83,9 @@ LIST_DEF(Int);
         self->len = 0; \
         return dup; \
     } \
-    T##ListIter T##List_insert_before(T##List *self, T##ListIter iter, T val) { \
+    A##Iter A##_insert_before(A *self, A##Iter iter, T val) { \
         if (iter->prev == NULL) return NULL; \
-        T##ListIter newnode = malloc(sizeof(T##ListNode)); \
+        A##Iter newnode = malloc(sizeof(A##Node_)); \
         newnode->prev = iter->prev; \
         newnode->next = iter; \
         newnode->val = val; \
@@ -83,9 +94,9 @@ LIST_DEF(Int);
         self->len++; \
         return newnode; \
     } \
-    T##ListIter T##List_insert_after(T##List *self, T##ListIter iter, T val) { \
+    A##Iter A##_insert_after(A *self, A##Iter iter, T val) { \
         if (iter->next == NULL) return NULL; \
-        T##ListIter newnode = malloc(sizeof(T##ListNode)); \
+        A##Iter newnode = malloc(sizeof(A##Node_)); \
         newnode->next = iter->next; \
         newnode->prev= iter; \
         newnode->val = val; \
@@ -94,48 +105,50 @@ LIST_DEF(Int);
         self->len++; \
         return newnode; \
     } \
-    void T##List_remove(T##List *self, T##ListIter iter) { \
+    void A##_remove(A *self, A##Iter iter) { \
         if (iter->prev == NULL || iter->next == NULL) return; \
         iter->prev->next = iter->next; \
         iter->next->prev = iter->prev; \
         free(iter); \
         self->len--; \
     } \
-    T##ListIter T##List_begin(T##List *self) { \
+    A##Iter A##_begin(A *self) { \
         return self->vhead->next; \
     } \
-    T##ListIter T##List_last(T##List *self) { \
+    A##Iter A##_last(A *self) { \
         if (self->vtail->prev == self->vhead) return NULL; \
         return self->vtail->prev; \
     } \
-    T##ListIter T##List_end(T##List *self) { \
+    A##Iter A##_end(A *self) { \
         return self->vtail; \
     } \
-    T##ListIter T##List_next(T##ListIter iter) { \
+    A##Iter A##_next(A##Iter iter) { \
         if (iter == NULL) return NULL; \
         return iter->next; \
     } \
-    T##ListIter T##List_prev(T##ListIter iter) { \
+    A##Iter A##_prev(A##Iter iter) { \
         if (iter == NULL) return NULL; \
         if (iter->prev == NULL) return NULL; \
         if (iter->prev->prev == NULL) return NULL; \
         return iter->prev; \
     } \
-    size_t T##List_len(T##List *self) { \
+    size_t A##_len(A *self) { \
         return self->len; \
     } \
-    T##ListIter T##List_push_back(T##List *self, T val) { \
-        return T##List_insert_before(self, self->vtail, val); \
+    A##Iter A##_push_back(A *self, T val) { \
+        return A##_insert_before(self, self->vtail, val); \
     } \
-    T##ListIter T##List_push_front(T##List *self, T val) { \
-        return T##List_insert_after(self, self->vhead, val); \
+    A##Iter A##_push_front(A *self, T val) { \
+        return A##_insert_after(self, self->vhead, val); \
     } \
-    void T##List_pop_back(T##List *self) { \
-        T##List_remove(self, self->vtail->prev); \
+    void A##_pop_back(A *self) { \
+        A##_remove(self, self->vtail->prev); \
     } \
-    void T##List_pop_front(T##List *self) { \
-        T##List_remove(self, self->vhead->next); \
-    } \
+    void A##_pop_front(A *self) { \
+        A##_remove(self, self->vhead->next); \
+    }
+
+#define LIST_IMPL(T) LIST_IMPL_AS(T, T##List)
 
 #endif
 
