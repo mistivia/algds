@@ -6,7 +6,7 @@ common_cflags = -Wall -Wno-sign-conversion -Wno-conversion -Wformat -Wformat=2 \
 	-D_GLIBCXX_ASSERTIONS \
 	-fstrict-flex-arrays=3 \
 	-fstack-clash-protection -fstack-protector-strong \
-	-Wtrampolines -fzero-init-padding-bits=all \
+	-Wtrampolines \
 	-Wbidi-chars=any \
 	-Werror=implicit -Werror=incompatible-pointer-types -Werror=int-conversion \
 	-fexceptions
