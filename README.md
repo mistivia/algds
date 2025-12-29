@@ -21,7 +21,7 @@
 
 ## Quickstart
 
-For example, if you have a custom type `FancyThing`, and you want a linked list of `FancyThing`s. Just add `LIST_DEF_AS(FancyThing, FancyThings)` to the header file, and `LIST_IMPL_AS(FancyThing, FancyList)` to a source file, and you get a new type `FancyList`, and many functions for free:
+For example, if you have a custom type `FancyThing`, and you want a linked list of `FancyThing`s. Just add `LIST_DEF_AS(FancyThing, FancyList)` to the header file, and `LIST_IMPL_AS(FancyThing, FancyList)` to a source file, and you get a new type `FancyList`, and many functions for free:
 
 - `FancyList_create`
 - `FancyLists_push_back`
