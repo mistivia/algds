@@ -3,12 +3,18 @@
 - Generic red-black tree
 - Generic vector
 - Generic linked-list
+- Generic array-based linked list (AList)
 - Generic priority queue
 - Generic Hash Table
 - Generic quick sort
 - Augmented red-black tree
 - Murmur Hash
 - String utilities
+
+## Documentation
+
+- [AGENTS.md](AGENTS.md): Architectural overview and instructions for AI coding agents.
+- [docs/usage.md](docs/usage.md): Detailed guide on how to use the generic macro system and implement traits.
 
 ## Build & Install
 
@@ -21,29 +27,32 @@
 
 ## Quickstart
 
-For example, if you have a custom type `FancyThing`, and you want a linked list of `FancyThing`s. Just add `LIST_DEF_AS(FancyThing, FancyList)` to the header file, and `LIST_IMPL_AS(FancyThing, FancyList)` to a source file, and you get a new type `FancyList`, and many functions for free:
+This library uses C macros to provide generic data structures. For any custom type `T`, you need to define "traits" (functions like `T_eq`, `T_cmp`, `T_hash`, `T_show`) and use declaration/implementation macros.
 
-- `FancyList_create`
-- `FancyLists_push_back`
-- `FancyList_push_front`
-- `FancyList_pop_back`
-- `FancyList_pop_front`
-- `FancyList_pop_front`
-- ...
+**Important:** Always use the `*_DEF_AS` and `*_IMPL_AS` variants of the macros.
 
-And if you want a hash table with `FancyThing` as key, and a integer as value. First, define and implement 2 functions:
+### Example: Linked List
 
-- `uint64_t FancyThing_hash(FancyThing self)`
-- `bool FancyThing_eq(FancyThing a, FancyThing b)`
+If you have a custom type `FancyThing`, and you want a linked list of them:
 
-These functions just act like how typeclass/trait/concept works in Haskell/Rust/C++. And we provide `mmhash` to help you build `FancyThing_hash`.
+1. In your header file: `LIST_DEF_AS(FancyThing, FancyList)`
+2. In your source file: `LIST_IMPL_AS(FancyThing, FancyList)`
 
-Then you can add `HASH_TABLE_DEF_AS(FancyThing, Int, FancyTable)` to the header file, and `HASH_TABLE_IMPL_AS(FancyThing, Int, FancyTable)` to a source file. Then you get a new type `FancyTable` and its functions:
+This generates functions like `FancyList_create`, `FancyList_push_back`, `FancyList_free`, etc.
 
-- `FancyTable_create`
-- `FancyTable_free`
-- `FancyTable_insert`
-- `FancyTable_find`
-- ...
+### Example: Hash Table
 
-And other data structures follow similar patterns.
+If you want a hash table with `FancyThing` as key and `Int` as value:
+
+1. Implement the required traits:
+   - `uint64_t FancyThing_hash(FancyThing self)`
+   - `bool FancyThing_eq(FancyThing a, FancyThing b)`
+2. In your header file: `HASH_TABLE_DEF_AS(FancyThing, Int, FancyTable)`
+3. In your source file: `HASH_TABLE_IMPL_AS(FancyThing, Int, FancyTable)`
+
+### Important: T_show Trait
+Containers like `Vector` and `AList` require the `T_show` trait to be defined at the time of instantiation (`*_IMPL_AS`), as their internal implementations depend on it.
+
+## Memory Management
+
+The `_free` functions provided by the containers (e.g., `FancyList_free`) only free the container's internal management structures (nodes, buffers). They **do not** free the elements stored inside if they are pointers. The user is responsible for the lifecycle of the stored elements.
