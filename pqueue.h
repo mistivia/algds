@@ -4,7 +4,7 @@
 #include "vec.h"
 
 #define PQUEUE_DEF_AS(T, A) \
-    VECTOR_DEF_AS(T, A##Vec_); \
+    DEF_VECTOR(T, A##Vec_); \
     typedef struct { \
         A##Vec_ vec; \
     } A; \
@@ -29,8 +29,8 @@ PQUEUE_DEF(Float);
 PQUEUE_DEF(String);
 PQUEUE_DEF(VoidPtr);
 
-#define PQUEUE_IMPL_AS(T, A) \
-    VECTOR_IMPL_AS(T, A##Vec_); \
+#define IMPL_PQUEUE(T, A) \
+    IMPL_VECTOR(T, A##Vec_); \
     static int A##_cmp(A *self, int a, int b) { \
         return T##_cmp(*A##Vec__ref(&self->vec, a), *A##Vec__ref(&self->vec, b)); \
     } \
@@ -86,6 +86,6 @@ PQUEUE_DEF(VoidPtr);
         A##Vec__free(&self->vec); \
     }
 
-#define PQUEUE_IMPL(T) PQUEUE_IMPL_AS(T, T##PQueue)
+#define PQUEUE_IMPL(T) IMPL_PQUEUE(T, T##PQueue)
 
 #endif

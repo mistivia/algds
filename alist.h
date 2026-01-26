@@ -5,14 +5,14 @@
 #include "type_alias.h"
 #include "vec.h"
 
-#define ALIST_DEF_AS(T, A) \
+#define DEF_ALIST(T, A) \
     struct A##_node { \
         T val; \
         int next; \
         int prev; \
     }; \
     typedef struct A##_node A##Node_; \
-    VECTOR_DEF_AS(A##Node_, A##Vec_) \
+    DEF_VECTOR(A##Node_, A##Vec_) \
     typedef int A##Iter; \
     typedef struct { \
         A##Vec_ vec; \
@@ -41,24 +41,24 @@
     T* A##_get(A *self, A##Iter iter); \
     void A##_show(A *self, FILE* fp);
 
-ALIST_DEF_AS(Int, IntAList)
-ALIST_DEF_AS(Bool, BoolAList)
-ALIST_DEF_AS(Long, LongAList)
-ALIST_DEF_AS(Char, CharAList)
-ALIST_DEF_AS(UInt, UIntAList)
-ALIST_DEF_AS(ULong, ULongAList)
-ALIST_DEF_AS(Double, DoubleAList)
-ALIST_DEF_AS(Float, FloatAList)
-ALIST_DEF_AS(String, StringAList)
-ALIST_DEF_AS(VoidPtr, VoidPtrAList)
+DEF_ALIST(Int, IntAList)
+DEF_ALIST(Bool, BoolAList)
+DEF_ALIST(Long, LongAList)
+DEF_ALIST(Char, CharAList)
+DEF_ALIST(UInt, UIntAList)
+DEF_ALIST(ULong, ULongAList)
+DEF_ALIST(Double, DoubleAList)
+DEF_ALIST(Float, FloatAList)
+DEF_ALIST(String, StringAList)
+DEF_ALIST(VoidPtr, VoidPtrAList)
 
-#define ALIST_IMPL_AS(T, A) \
+#define IMPL_ALIST(T, A) \
     void A##Node__show(A##Node_ node, FILE* fp) { \
         fprintf(fp, "{val: "); \
         T##_show(node.val, fp); \
         fprintf(fp, ", next: %d, prev: %d}", node.next, node.prev); \
     } \
-    VECTOR_IMPL_AS(A##Node_, A##Vec_) \
+    IMPL_VECTOR(A##Node_, A##Vec_) \
     void A##_init(A *self) { \
         A##Vec__init(&self->vec); \
         A##Node_ vhead_node = { .next = 1, .prev = -1 }; \

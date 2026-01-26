@@ -7,7 +7,7 @@
 
 #include "type_alias.h"
 
-#define VECTOR_DEF_AS(T, A) \
+#define DEF_VECTOR(T, A) \
     typedef struct { \
         T* buffer; \
         int size; \
@@ -31,9 +31,9 @@
     void A##_show(A self, FILE* fp); \
     void A##_free(A *self);
 
-#define VECTOR_DEF(T) VECTOR_DEF_AS(T, T##Vector)
+#define VECTOR_DEF(T) DEF_VECTOR(T, T##Vector)
 
-#define VECTOR_IMPL_AS(T, A) \
+#define IMPL_VECTOR(T, A) \
     void A##_init(A *self) { \
         self->buffer = (T*)malloc(sizeof(T) * 16); \
         self->cap = 16; \
@@ -110,7 +110,7 @@
     size_t A##_len(A *self) { return self->size; } \
     void A##_free(A *self) { free(self->buffer); }
 
-#define VECTOR_IMPL(T) VECTOR_IMPL_AS(T, T##Vector)
+#define VECTOR_IMPL(T) IMPL_VECTOR(T, T##Vector)
 
 VECTOR_DEF(Int);
 VECTOR_DEF(Bool);

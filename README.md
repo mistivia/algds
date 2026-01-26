@@ -35,8 +35,8 @@ This library uses C macros to provide generic data structures. For any custom ty
 
 If you have a custom type `FancyThing`, and you want a linked list of them:
 
-1. In your header file: `LIST_DEF_AS(FancyThing, FancyList)`
-2. In your source file: `LIST_IMPL_AS(FancyThing, FancyList)`
+1. In your header file: `DEF_LIST(FancyThing, FancyList)`
+2. In your source file: `IMPL_LIST(FancyThing, FancyList)`
 
 This generates functions like `FancyList_create`, `FancyList_push_back`, `FancyList_free`, etc.
 
@@ -47,8 +47,8 @@ If you want a hash table with `FancyThing` as key and `Int` as value:
 1. Implement the required traits:
    - `uint64_t FancyThing_hash(FancyThing self)`
    - `bool FancyThing_eq(FancyThing a, FancyThing b)`
-2. In your header file: `HASH_TABLE_DEF_AS(FancyThing, Int, FancyTable)`
-3. In your source file: `HASH_TABLE_IMPL_AS(FancyThing, Int, FancyTable)`
+2. In your header file: `DEF_HASH_TABLE(FancyThing, Int, FancyTable)`
+3. In your source file: `IMPL_HASH_TABLE(FancyThing, Int, FancyTable)`
 
 ### Important: T_show Trait
 Containers like `Vector` and `AList` require the `T_show` trait to be defined at the time of instantiation (`*_IMPL_AS`), as their internal implementations depend on it.

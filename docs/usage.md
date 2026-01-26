@@ -11,6 +11,15 @@ This guide explains how an AI coding agent should interact with and use the `alg
 - **Memory Management:** The `_free` function ONLY frees the container's internal buffers or node structures. It **does not** free the objects stored inside if they are pointers.
 - **AList:** This is an **Array-based Linked List**, not a standard "Array List" (Vector). It provides linked list functionality (O(1) insertion/deletion at any iterator) while being stored in a contiguous array for better performance.
 
+- `list.h`中的list在迭代的时候要用这样的模式，而**不是**判断是否为NULL：
+```
+while (it != XXXList_end(lst)) {
+    // ...
+    it = XXXList_next(it);
+}
+```
+
+
 ### 1. Identify or Define Traits
 Every type `T` used in a container MUST have the following "traits" (functions) defined if the container's macros expect them:
 - `Bool T_eq(T lhs, T rhs)`: Equality check.
@@ -36,7 +45,7 @@ typedef struct {
 } Person;
 
 // Declare the Vector type 'PersonVector'
-VECTOR_DEF_AS(Person, PersonVector)
+DEF_VECTOR(Person, PersonVector)
 ```
 
 #### In the Source (`.c`)
@@ -50,22 +59,22 @@ uint64_t Person_hash(Person p) { ... }
 void Person_show(Person p, FILE* fp) { ... }
 
 // Implement the Vector logic for PersonVector
-VECTOR_IMPL_AS(Person, PersonVector)
+IMPL_VECTOR(Person, PersonVector)
 ```
 
 ## Available Macros
 
 | Data Structure | Header | Declaration Macro | Implementation Macro |
 | :--- | :--- | :--- | :--- |
-| Vector | `vec.h` | `VECTOR_DEF_AS(T, A)` | `VECTOR_IMPL_AS(T, A)` |
-| Linked List | `list.h` | `LIST_DEF_AS(T, A)` | `LIST_IMPL_AS(T, A)` |
-| AList | `alist.h` | `ALIST_DEF_AS(T, A)` | `ALIST_IMPL_AS(T, A)` |
-| Hash Table | `hash_table.h` | `HASH_TABLE_DEF_AS(K, V, A)` | `HASH_TABLE_IMPL_AS(K, V, A)` |
-| Priority Queue | `pqueue.h` | `PQUEUE_DEF_AS(T, A)` | `PQUEUE_IMPL_AS(T, A)` |
-| Tree Map | `tree_map.h` | `TREE_MAP_DEF_AS(K, V, A)` | `TREE_MAP_IMPL_AS(K, V, A)` |
+| Vector | `vec.h` | `DEF_VECTOR(T, A)` | `IMPL_VECTOR(T, A)` |
+| Linked List | `list.h` | `DEF_LIST(T, A)` | `IMPL_LIST(T, A)` |
+| AList | `alist.h` | `DEF_ALIST(T, A)` | `IMPL_ALIST(T, A)` |
+| Hash Table | `hash_table.h` | `DEF_HASH_TABLE(K, V, A)` | `IMPL_HASH_TABLE(K, V, A)` |
+| Priority Queue | `pqueue.h` | `PQUEUE_DEF_AS(T, A)` | `IMPL_PQUEUE(T, A)` |
+| Tree Map | `tree_map.h` | `DEF_TREE_MAP(K, V, A)` | `IMPL_TREE_MAP(K, V, A)` |
 
 ## Best Practices for Agents
-1. **Check for existing instantiations:** Before implementing `VECTOR_IMPL_AS(Int, IntVector)`, check `vec.c` to see if it's already there.
+1. **Check for existing instantiations:** Before implementing `IMPL_VECTOR(Int, IntVector)`, check `vec.c` to see if it's already there.
 2. **Follow Naming Conventions:** Use `TypeAlias` (e.g., `IntVector`) for the second argument of the `_AS` macros.
 3. **Trait Consistency:** Ensure trait names exactly match `T_traitname`.
 4. **Memory Management:** Always call the `_free` function (e.g., `IntVector_free(&vec)`) when a container is no longer needed.

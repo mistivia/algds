@@ -30,7 +30,7 @@
 
 #include "type_alias.h"
 
-#define TREE_MAP_DEF_AS(K, V, A) \
+#define DEF_TREE_MAP(K, V, A) \
     typedef struct { \
         RBNode rbnode; \
         K key; \
@@ -54,9 +54,9 @@
     A##Iter A##_parent(A##Iter iter); \
     void A##_free(A *self);
 
-#define TREE_MAP_DEF(K, V) TREE_MAP_DEF_AS(K, V, K##2##V##TreeMap)
+#define TREE_MAP_DEF(K, V) DEF_TREE_MAP(K, V, K##2##V##TreeMap)
 
-#define TREE_MAP_IMPL_AS(K, V, A) \
+#define IMPL_TREE_MAP(K, V, A) \
     static inline int A##_cmp(void *vlhs, void *vrhs) { \
         K *lhs = vlhs, *rhs = vrhs; \
         return K##_cmp(*lhs, *rhs); \
@@ -110,7 +110,7 @@
         return destroy_rb_tree(&self->tree, NULL); \
     }
 
-#define TREE_MAP_IMPL(K, V) TREE_MAP_IMPL_AS(K, V, K##2##V##TreeMap)
+#define TREE_MAP_IMPL(K, V) IMPL_TREE_MAP(K, V, K##2##V##TreeMap)
 
 struct rb_node {
     struct {

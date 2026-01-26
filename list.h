@@ -6,7 +6,7 @@
 #include "type_alias.h"
 
 
-#define LIST_DEF_AS(T, A) \
+#define DEF_LIST(T, A) \
     struct A##_node { \
         T val; \
         struct A##_node *prev; \
@@ -37,7 +37,7 @@
     void A##_pop_back(A *self); \
     void A##_pop_front(A *self);
 
-#define LIST_DEF(T) LIST_DEF_AS(T, T##List)
+#define LIST_DEF(T) DEF_LIST(T, T##List)
 
 LIST_DEF(Int);
 LIST_DEF(Bool);
@@ -50,7 +50,7 @@ LIST_DEF(Float);
 LIST_DEF(String);
 LIST_DEF(VoidPtr);
 
-#define LIST_IMPL_AS(T, A) \
+#define IMPL_LIST(T, A) \
     void A##_init(A *self) { \
         self->vhead = malloc(sizeof(A##Node_)); \
         self->vtail = malloc(sizeof(A##Node_)); \
@@ -148,7 +148,7 @@ LIST_DEF(VoidPtr);
         A##_remove(self, self->vhead->next); \
     }
 
-#define LIST_IMPL(T) LIST_IMPL_AS(T, T##List)
+#define LIST_IMPL(T) IMPL_LIST(T, T##List)
 
 #endif
 

@@ -16,7 +16,7 @@ struct hash_table {
 };
 typedef struct hash_table HashTable;
 
-#define HASH_TABLE_DEF_AS(K, V, A) \
+#define DEF_HASH_TABLE(K, V, A) \
     typedef struct { \
         K key; \
         V val; \
@@ -36,9 +36,9 @@ typedef struct hash_table HashTable;
     void A##_free(A *self); \
     A A##_move(A *self);
 
-#define HASH_TABLE_DEF(K, V) HASH_TABLE_DEF_AS(K, V, K##2##V##HashTable)
+#define HASH_TABLE_DEF(K, V) DEF_HASH_TABLE(K, V, K##2##V##HashTable)
 
-#define HASH_TABLE_IMPL_AS(K, V, A) \
+#define IMPL_HASH_TABLE(K, V, A) \
     static uint64_t A##_hash(void *vk) { \
         K *k = vk; \
         return K##_hash(*k); \
@@ -92,7 +92,7 @@ typedef struct hash_table HashTable;
         return dup; \
     }
 
-#define HASH_TABLE_IMPL(K, V) HASH_TABLE_IMPL_AS(K, V, K##2##V##HashTable)
+#define HASH_TABLE_IMPL(K, V) IMPL_HASH_TABLE(K, V, K##2##V##HashTable)
 
 HASH_TABLE_DEF(String, Int);
 HASH_TABLE_DEF(String, String);

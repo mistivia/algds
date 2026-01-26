@@ -7,7 +7,7 @@ This project, `algds`, is a collection of type-safe, generic data structures and
 - **Purpose:** Provide high-performance, type-safe, and generic data structures for C.
 - **Main Technologies:** C (C99+), GNU Make.
 - **Architecture:** 
-    - **Macro Generics:** Each data structure is defined via a set of macros (e.g., `VECTOR_DEF_AS` and `VECTOR_IMPL_AS`).
+    - **Macro Generics:** Each data structure is defined via a set of macros (e.g., `DEF_VECTOR` and `IMPL_VECTOR`).
     - **Traits Pattern:** The library relies on "traits" (functions like `T_eq`, `T_cmp`, `T_hash`, `T_show`) that must be defined for any type used in the generic containers.
     - **Pre-instantiation:** Common types like `Int`, `String`, `Bool`, etc., are pre-instantiated in the library's `.c` files.
 
@@ -52,16 +52,16 @@ To use a data structure with a custom type `T`:
 Example for a List of `MyType`:
 ```c
 // In header
-LIST_DEF_AS(MyType, MyList)
+DEF_LIST(MyType, MyList)
 
 // In source
-LIST_IMPL_AS(MyType, MyList)
+IMPL_LIST(MyType, MyList)
 ```
 
 ### Naming Conventions
 - Types are usually CamelCase (e.g., `IntVector`).
 - Functions are prefixed with the type alias and an underscore (e.g., `IntVector_push_back`).
-- Macros for definition/implementation are uppercase (e.g., `VECTOR_DEF_AS`).
+- Macros for definition/implementation are uppercase (e.g., `DEF_VECTOR`).
 
 ### Post-Task Requirements
 After completing a task (adding a feature, fixing a bug, etc.), the agent MUST:
