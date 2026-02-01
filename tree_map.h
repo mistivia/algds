@@ -112,8 +112,6 @@
         return destroy_rb_tree(&self->tree, NULL); \
     }
 
-#define TREE_MAP_IMPL(K, V) IMPL_TREE_MAP(K, V, K##2##V##TreeMap)
-
 struct rb_node {
     struct {
         struct rb_node *rbe_left;
