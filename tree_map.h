@@ -28,9 +28,7 @@
 
 #include <stdlib.h>
 
-#include "type_alias.h"
-
-#define DEF_TREE_MAP(K, V, A) \
+#define TREE_MAP(A, K, V) \
     typedef struct { \
         RBNode rbnode; \
         K key; \
@@ -40,28 +38,25 @@
     typedef struct { \
         RBTree tree; \
     } A; \
-    void A##_init(A *self); \
-    A A##_create(); \
-    A##Iter A##_insert(A *self, K key, V value); \
-    A##Iter A##_find(A *self, K key); \
-    V* A##_get(A *self, K key); \
-    A##Iter A##_next(A *self, A##Iter iter); \
-    A##Iter A##_min(A *self); \
-    A##Iter A##_max(A *self); \
-    void A##_remove(A *self, A##Iter iter); \
-    A##Iter A##_left(A##Iter iter); \
-    A##Iter A##_right(A##Iter iter); \
-    A##Iter A##_parent(A##Iter iter); \
-    void A##_free(A *self);
-
-#define TREE_MAP_DEF(K, V) DEF_TREE_MAP(K, V, K##2##V##TreeMap)
-
-#define IMPL_TREE_MAP(K, V, A) \
+    A A##_create() __attribute__((weak)); \
+    A##Iter A##_insert(A *self, K key, V value) __attribute__((weak)); \
+    A##Iter A##_find(A *self, K key) __attribute__((weak)); \
+    V* A##_get(A *self, K key) __attribute__((weak)); \
+    A##Iter A##_next(A *self, A##Iter iter) __attribute__((weak)); \
+    A##Iter A##_min(A *self) __attribute__((weak)); \
+    A##Iter A##_max(A *self) __attribute__((weak)); \
+    void A##_remove(A *self, A##Iter iter) __attribute__((weak)); \
+    A##Iter A##_left(A##Iter iter) __attribute__((weak)); \
+    A##Iter A##_right(A##Iter iter) __attribute__((weak)); \
+    A##Iter A##_parent(A##Iter iter) __attribute__((weak)); \
+    void A##_destroy(A *self) __attribute__((weak)); \
+    \
+    \
     static inline int A##_cmp(void *vlhs, void *vrhs) { \
         K *lhs = vlhs, *rhs = vrhs; \
         return K##_cmp(*lhs, *rhs); \
     } \
-    void A##_init(A *self) { \
+    static inline void A##_init(A *self) { \
         self->tree.rbh_root = NULL; \
         self->tree.cmp = A##_cmp; \
         self->tree.augment = NULL; \
@@ -86,6 +81,8 @@
         return &iter->value; \
     } \
     void A##_remove(A *self, A##Iter iter) { \
+        K##_destroy(&iter->key); \
+        V##_destroy(&iter->value); \
         rb_tree_remove(&self->tree, iter); \
     } \
     A##Iter A##_next(A *self, A##Iter iter) { \
@@ -106,7 +103,12 @@
     A##Iter A##_parent(A##Iter iter) { \
         return rb_tree_parent(iter); \
     } \
-    void A##_free(A *self) { \
+    void A##_destroy(A *self) { \
+        for (A##Iter i = A##_min(self); i != NULL;) { \
+            A##Iter next = A##_next(self, i); \
+            A##_remove(self, i); \
+            i = next; \
+        } \
         return destroy_rb_tree(&self->tree, NULL); \
     }
 
@@ -144,15 +146,6 @@ void *rb_tree_parent(void *node);
 
 void destroy_rb_tree(RBTree *, void (*freeCb)(void *));
 
-TREE_MAP_DEF(String, Int);
-TREE_MAP_DEF(String, String);
-TREE_MAP_DEF(String, Double);
-TREE_MAP_DEF(String, VoidPtr);
-TREE_MAP_DEF(Int, Int);
-TREE_MAP_DEF(Int, Double);
-TREE_MAP_DEF(VoidPtr, Int);
-TREE_MAP_DEF(VoidPtr, String);
-TREE_MAP_DEF(VoidPtr, VoidPtr);
 
 #endif
 

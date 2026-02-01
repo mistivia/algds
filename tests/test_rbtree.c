@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "tree_map.h"
+#include "basic_types.h"
 
 typedef struct {
     RBNode node;
@@ -57,6 +58,8 @@ void basic_test() {
     destroy_rb_tree(&tree, NULL);
 }
 
+TREE_MAP(Int2IntTreeMap, Int, Int)
+
 void tree_map_basic_test() {
     Int2IntTreeMap tree;
     Int2IntTreeMap_init(&tree);
@@ -82,7 +85,7 @@ void tree_map_basic_test() {
         assert(iter->key == expected[i]);
         i++;
     }
-    Int2IntTreeMap_free(&tree);
+    Int2IntTreeMap_destroy(&tree);
 }
 
 

@@ -4,19 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "type_alias.h"
-
-struct hash_table {
-    void *buf;
-    char *flagbuf;
-    int64_t size;
-    int64_t cap;
-    int64_t taken;
-    int64_t elemsz;
-};
-typedef struct hash_table HashTable;
-
-#define DEF_HASH_TABLE(K, V, A) \
+#define HASH_TABLE(A, K, V) \
     typedef struct { \
         K key; \
         V val; \
@@ -25,29 +13,26 @@ typedef struct hash_table HashTable;
     typedef struct { \
         HashTable ht; \
     } A; \
-    void A##_init(A *self); \
-    A A##_create(); \
-    bool A##_insert(A *self, K key, V value); \
-    void A##_remove(A *ht, A##Iter iter); \
-    V* A##_get(A *self, K key); \
-    A##Iter A##_find(A *self, K key); \
-    A##Iter A##_begin(A *self); \
-    A##Iter A##_next(A *self, A##Iter iter); \
-    void A##_free(A *self); \
-    A A##_move(A *self);
-
-#define HASH_TABLE_DEF(K, V) DEF_HASH_TABLE(K, V, K##2##V##HashTable)
-
-#define IMPL_HASH_TABLE(K, V, A) \
-    static uint64_t A##_hash(void *vk) { \
+    A A##_create()  __attribute__((weak)); \
+    bool A##_insert(A *self, K key, V value)  __attribute__((weak)); \
+    void A##_remove(A *ht, A##Iter iter)  __attribute__((weak)); \
+    V* A##_get(A *self, K key)  __attribute__((weak)); \
+    A##Iter A##_find(A *self, K key)  __attribute__((weak)); \
+    A##Iter A##_begin(A *self)  __attribute__((weak)); \
+    A##Iter A##_end(A *self)  __attribute__((weak)); \
+    A##Iter A##_next(A *self, A##Iter iter)  __attribute__((weak)); \
+    void A##_destroy(A *self)  __attribute__((weak)); \
+    A A##_move(A *self)  __attribute__((weak)); \
+    \
+    static inline uint64_t A##_hash(void *vk) { \
         K *k = vk; \
         return K##_hash(*k); \
     } \
-    static bool A##_eq(void *vk1, void *vk2) { \
+    static inline bool A##_eq(void *vk1, void *vk2) { \
         K *k1 = vk1, *k2 = vk2; \
         return K##_eq(*k1, *k2); \
     } \
-    void A##_init(A *self) { \
+    static inline void A##_init(A *self) { \
         init_hash_table(&self->ht, sizeof(A##Entry_), 16); \
     } \
     A A##_create() { \
@@ -70,6 +55,8 @@ typedef struct hash_table HashTable;
         return &(entry->val); \
     } \
     void A##_remove(A *self, A##Iter iter) { \
+        K##_destroy(&iter->key); \
+        V##_destroy(&iter->val); \
         hash_table_remove(&self->ht, iter); \
     } \
     A##Iter A##_begin(A *self) { \
@@ -78,7 +65,13 @@ typedef struct hash_table HashTable;
     A##Iter A##_next(A *self, A##Iter iter) { \
         return hash_table_next(&self->ht, iter); \
     } \
-    void A##_free(A *self) { \
+    void A##_destroy(A *self) { \
+        A##Iter it = A##_begin(self); \
+        while (it != A##_end(self)) { \
+            K##_destroy(&it->key); \
+            V##_destroy(&it->val); \
+            it = A##_next(self, it); \
+        } \
         destroy_hash_table(&self->ht); \
     } \
     A A##_move(A *self) { \
@@ -90,20 +83,19 @@ typedef struct hash_table HashTable;
         self->ht.cap = 0; \
         self->ht.taken = 0; \
         return dup; \
-    }
+    } \
+    A##Iter A##_end(A *self) {return NULL;}  \
+    \
 
-#define HASH_TABLE_IMPL(K, V) IMPL_HASH_TABLE(K, V, K##2##V##HashTable)
-
-HASH_TABLE_DEF(String, Int);
-HASH_TABLE_DEF(String, String);
-HASH_TABLE_DEF(String, Double);
-HASH_TABLE_DEF(String, VoidPtr);
-HASH_TABLE_DEF(Int, Int);
-HASH_TABLE_DEF(Int, Double);
-HASH_TABLE_DEF(VoidPtr, Int);
-HASH_TABLE_DEF(VoidPtr, String);
-HASH_TABLE_DEF(VoidPtr, VoidPtr);
-
+struct hash_table {
+    void *buf;
+    char *flagbuf;
+    int64_t size;
+    int64_t cap;
+    int64_t taken;
+    int64_t elemsz;
+};
+typedef struct hash_table HashTable;
 void init_hash_table(HashTable *ht, int64_t elemsz, int64_t cap);
 bool hash_table_insert(HashTable *ht, void *elem, uint64_t (*hash)(void*), bool (*eq)(void*, void*));
 void hash_table_remove(HashTable *ht, void *iter);

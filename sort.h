@@ -4,12 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "type_alias.h"
-
-#define QSORT_DEF(T) \
-    void T##_qsort(T* arr, int n);
-
-#define QSORT_IMPL(T) \
+#define QSORT(T) \
+    void T##_qsort(T* arr, int n) __attribute__((weak)); \
     static inline void T##_qsort_swap(T* arr, int lhs, int rhs) { \
         if (lhs == rhs) return; \
         T buf; \
@@ -35,20 +31,10 @@
             lp++; \
             rp--; \
         } \
-        if (T##_cmp(arr[rp], arr[0]) > 0) rp--; \
+        if (n > 1 && T##_cmp(arr[rp], arr[0]) > 0) rp--; \
         T##_qsort_swap(arr, 0, rp); \
         T##_qsort(arr, rp); \
         T##_qsort(arr+rp+1, n-rp-1); \
     }
-
-QSORT_DEF(Int);
-QSORT_DEF(Bool);
-QSORT_DEF(Long);
-QSORT_DEF(Char);
-QSORT_DEF(UInt);
-QSORT_DEF(ULong);
-QSORT_DEF(Double);
-QSORT_DEF(Float);
-QSORT_DEF(String);
 
 #endif

@@ -4,19 +4,17 @@
 #include <string.h>
 
 #include "pqueue.h"
-#include "basic_traits.h"
+#include "basic_types.h"
 
 typedef Int MinInt;
 
 int MinInt_cmp(Int lhs, Int rhs) {
     return -Int_cmp(lhs, rhs);
 }
-void MinInt_show(Int self, FILE* fp) {
-    Int_show(self, fp);
-}
+void MinInt_destroy(MinInt *i) {}
 
-PQUEUE_DEF(MinInt);
-PQUEUE_IMPL(MinInt);
+PQUEUE(IntPQueue, Int)
+PQUEUE(MinIntPQueue, MinInt)
 
 int main() {
     printf("[TEST] pqueue\n");
@@ -48,7 +46,7 @@ int main() {
         MinIntPQueue_pop(&minpq);
     }
     assert(MinIntPQueue_top(&minpq) == NULL);
-    MinIntPQueue_free(&minpq);
+    MinIntPQueue_destroy(&minpq);
 
     int elems2[10] = {-10, -8, -7, -9, -5, -6, -4, -2, -3, -1};
     int expected[10] = {-10, -8, -7, -7, -5, -5, -4, -2, -2, -1};
@@ -58,7 +56,8 @@ int main() {
         int *top = IntPQueue_top(&pq);
         assert(*top == expected[i]);
     }
-    IntPQueue_free(&pq);
+    IntPQueue_destroy(&pq);
     printf("[PASS] pqueue\n");
     return 0;
 }
+ 

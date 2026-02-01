@@ -25,20 +25,10 @@
 
 #include "tree_map.h"
 
-#include "basic_traits.h"
+#include "basic_types.h"
 
 #define RED 1
 #define BLACK 0
-
-TREE_MAP_IMPL(String, Int);
-TREE_MAP_IMPL(String, String);
-TREE_MAP_IMPL(String, Double);
-TREE_MAP_IMPL(String, VoidPtr);
-TREE_MAP_IMPL(Int, Int);
-TREE_MAP_IMPL(Int, Double);
-TREE_MAP_IMPL(VoidPtr, Int);
-TREE_MAP_IMPL(VoidPtr, String);
-TREE_MAP_IMPL(VoidPtr, VoidPtr);
 
 static RBNode *rb_tree_minmax(RBTree *, int);
 void *rb_tree_min(RBTree *head) { return rb_tree_minmax(head, -1); }

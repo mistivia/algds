@@ -1,13 +1,15 @@
 #include "list.h"
+#include "basic_types.h"
 
 #include <assert.h>
 #include <stdio.h>
 
+LIST(IntList, Int)
+
 int main() {
     printf("[TEST] list\n");
 
-    IntList lst;
-    IntList_init(&lst);
+    IntList lst = IntList_create();
 
     IntList_push_back(&lst, 3);
     IntList_push_front(&lst, 1);
@@ -38,7 +40,7 @@ int main() {
 
     assert(IntList_len(&lst) == 1);
 
-    IntList_free(&lst);
+    IntList_destroy(&lst);
 
     printf("[PASS] list\n");
 }

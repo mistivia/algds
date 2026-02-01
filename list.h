@@ -2,55 +2,39 @@
 #define ALGDS_LIST_H_
 
 #include <stdlib.h>
+#include <stdbool.h>
 
-#include "type_alias.h"
-
-
-#define DEF_LIST(T, A) \
-    struct A##_node { \
+#define LIST(A, T) \
+    typedef struct A##Node_ { \
         T val; \
-        struct A##_node *prev; \
-        struct A##_node *next; \
-    }; \
-    typedef struct A##_node A##Node_; \
+        struct A##Node_ *prev; \
+        struct A##Node_ *next; \
+    } A##Node_; \
     typedef A##Node_ *A##Iter; \
     typedef struct { \
         A##Node_ *vhead; \
         A##Node_ *vtail; \
         size_t len; \
     } A; \
-    void A##_init(A *self); \
-    A A##_create(); \
-    void A##_free(A *self); \
-    A A##_move(A *self); \
-    A##Iter A##_insert_before(A *self, A##Iter iter, T val); \
-    A##Iter A##_insert_after(A *self, A##Iter iter, T val); \
-    void A##_remove(A *self, A##Iter iter); \
-    A##Iter A##_begin(A *self); \
-    A##Iter A##_last(A *self); \
-    A##Iter A##_end(A *self); \
-    A##Iter A##_next(A##Iter iter); \
-    A##Iter A##_prev(A##Iter iter); \
-    size_t A##_len(A *self); \
-    A##Iter A##_push_back(A *self, T val); \
-    A##Iter A##_push_front(A *self, T val); \
-    void A##_pop_back(A *self); \
-    void A##_pop_front(A *self);
-
-#define LIST_DEF(T) DEF_LIST(T, T##List)
-
-LIST_DEF(Int);
-LIST_DEF(Bool);
-LIST_DEF(Long);
-LIST_DEF(Char);
-LIST_DEF(UInt);
-LIST_DEF(ULong);
-LIST_DEF(Double);
-LIST_DEF(Float);
-LIST_DEF(String);
-LIST_DEF(VoidPtr);
-
-#define IMPL_LIST(T, A) \
+    \
+    void A##_init(A *self) __attribute__((weak)); \
+    A A##_create() __attribute__((weak)); \
+    void A##_destroy(A *self) __attribute__((weak)); \
+    A A##_move(A *self) __attribute__((weak)); \
+    A##Iter A##_insert_before(A *self, A##Iter iter, T val) __attribute__((weak)); \
+    A##Iter A##_insert_after(A *self, A##Iter iter, T val) __attribute__((weak)); \
+    void A##_remove(A *self, A##Iter iter) __attribute__((weak)); \
+    A##Iter A##_begin(A *self) __attribute__((weak)); \
+    A##Iter A##_last(A *self) __attribute__((weak)); \
+    A##Iter A##_end(A *self) __attribute__((weak)); \
+    A##Iter A##_next(A##Iter iter) __attribute__((weak)); \
+    A##Iter A##_prev(A##Iter iter) __attribute__((weak)); \
+    size_t A##_len(A *self) __attribute__((weak)); \
+    A##Iter A##_push_back(A *self, T val) __attribute__((weak)); \
+    A##Iter A##_push_front(A *self, T val) __attribute__((weak)); \
+    void A##_pop_back(A *self) __attribute__((weak)); \
+    void A##_pop_front(A *self) __attribute__((weak)); \
+    \
     void A##_init(A *self) { \
         self->vhead = malloc(sizeof(A##Node_)); \
         self->vtail = malloc(sizeof(A##Node_)); \
@@ -65,13 +49,19 @@ LIST_DEF(VoidPtr);
         A##_init(&self); \
         return self; \
     } \
-    void A##_free(A *self) { \
+    void A##_destroy(A *self) { \
         A##Iter cur = self->vhead; \
         while (cur != NULL) { \
             A##Iter next = cur->next; \
+            if (cur != self->vhead && cur != self->vtail) { \
+                T##_destroy(&cur->val); \
+            } \
             free(cur); \
             cur = next; \
         } \
+        self->vhead = NULL; \
+        self->vtail = NULL; \
+        self->len = 0; \
     } \
     A A##_move(A *self) { \
         A dup; \
@@ -109,6 +99,7 @@ LIST_DEF(VoidPtr);
         if (iter->prev == NULL || iter->next == NULL) return; \
         iter->prev->next = iter->next; \
         iter->next->prev = iter->prev; \
+        T##_destroy(&iter->val); \
         free(iter); \
         self->len--; \
     } \
@@ -148,7 +139,4 @@ LIST_DEF(VoidPtr);
         A##_remove(self, self->vhead->next); \
     }
 
-#define LIST_IMPL(T) IMPL_LIST(T, T##List)
-
 #endif
-

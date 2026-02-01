@@ -3,39 +3,24 @@
 
 #include "vec.h"
 
-#define PQUEUE_DEF_AS(T, A) \
-    DEF_VECTOR(T, A##Vec_); \
+#define PQUEUE(A, T) \
+    VECTOR(A##Vec_, T); \
     typedef struct { \
         A##Vec_ vec; \
     } A; \
-    void A##_init(A *self); \
-    A A##_create(); \
-    void A##_push(A *self, T elem); \
-    void A##_pop(A *self); \
-    T* A##_top(A *self); \
-    A A##_move(A *self); \
-    void A##_free(A *self);
-
-#define PQUEUE_DEF(T) PQUEUE_DEF_AS(T, T##PQueue)
-
-PQUEUE_DEF(Int);
-PQUEUE_DEF(Bool);
-PQUEUE_DEF(Long);
-PQUEUE_DEF(Char);
-PQUEUE_DEF(UInt);
-PQUEUE_DEF(ULong);
-PQUEUE_DEF(Double);
-PQUEUE_DEF(Float);
-PQUEUE_DEF(String);
-PQUEUE_DEF(VoidPtr);
-
-#define IMPL_PQUEUE(T, A) \
-    IMPL_VECTOR(T, A##Vec_); \
-    static int A##_cmp(A *self, int a, int b) { \
+    A A##_create()  __attribute__((weak)); \
+    void A##_push(A *self, T elem)  __attribute__((weak)); \
+    void A##_pop(A *self)  __attribute__((weak)); \
+    T* A##_top(A *self)  __attribute__((weak)); \
+    A A##_move(A *self)  __attribute__((weak)); \
+    void A##_destroy(A *self)  __attribute__((weak)); \
+    \
+    \
+    static inline int A##_cmp(A *self, int a, int b) { \
         return T##_cmp(*A##Vec__ref(&self->vec, a), *A##Vec__ref(&self->vec, b)); \
     } \
-    void A##_init(A *self) { \
-         A##Vec__init(&self->vec); \
+    static inline void A##_init(A *self) { \
+        self->vec = A##Vec__create(); \
     } \
     A A##_create() { \
         A self; \
@@ -50,7 +35,7 @@ PQUEUE_DEF(VoidPtr);
             i /= 2; \
         } \
     } \
-    static void A##_heapify(A *self, int idx) { \
+    static inline void A##_heapify(A *self, int idx) { \
         int left, right, largest; \
         left = 2 * idx + 1; \
         right = 2 * idx + 2; \
@@ -82,8 +67,8 @@ PQUEUE_DEF(VoidPtr);
         dup.vec = A##Vec__move(&self->vec); \
         return dup; \
     } \
-    void A##_free(A *self) { \
-        A##Vec__free(&self->vec); \
+    void A##_destroy(A *self) { \
+        A##Vec__destroy(&self->vec); \
     }
 
 #define PQUEUE_IMPL(T) IMPL_PQUEUE(T, T##PQueue)

@@ -4,6 +4,9 @@
 #include <string.h>
 
 #include "hash_table.h"
+#include "basic_types.h"
+
+HASH_TABLE(Int2IntHashTable, Int, Int)
 
 bool found[10000];
 
@@ -59,7 +62,7 @@ int main() {
     for (int i = 0; i < 10000; i++) {
         assert(found[i]);
     }
-    Int2IntHashTable_free(&ht);
+    Int2IntHashTable_destroy(&ht);
 
     printf("[PASS] htable\n");
 }

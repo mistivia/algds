@@ -1,14 +1,11 @@
 #include "sort.h"
+#include "basic_types.h"
 
-#include "basic_traits.h"
-
-
-QSORT_IMPL(Int);
-QSORT_IMPL(Bool);
-QSORT_IMPL(Long);
-QSORT_IMPL(Char);
-QSORT_IMPL(UInt);
-QSORT_IMPL(ULong);
-QSORT_IMPL(Double);
-QSORT_IMPL(Float);
-QSORT_IMPL(String);
+QSORT(Int);
+QSORT(Bool);
+QSORT(Long);
+QSORT(Char);
+QSORT(UInt);
+QSORT(ULong);
+QSORT(Double);
+QSORT(Float);

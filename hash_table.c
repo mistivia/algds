@@ -3,21 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "basic_traits.h"
-
 #define HTFL_NUL 0
 #define HTFL_VAL 1
 #define HTFL_DEL 2
-
-HASH_TABLE_IMPL(String, Int);
-HASH_TABLE_IMPL(String, String);
-HASH_TABLE_IMPL(String, Double);
-HASH_TABLE_IMPL(String, VoidPtr);
-HASH_TABLE_IMPL(Int, Int);
-HASH_TABLE_IMPL(Int, Double);
-HASH_TABLE_IMPL(VoidPtr, Int);
-HASH_TABLE_IMPL(VoidPtr, VoidPtr);
-HASH_TABLE_IMPL(VoidPtr, String);
 
 
 static void rebuild(HashTable *ht, uint64_t (*hash)(void*), bool (*eq)(void*, void*)) {
