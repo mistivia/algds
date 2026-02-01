@@ -29,7 +29,10 @@ typedef const void *Ptr;
     static inline uint64_t T##_hash(T x) { \
         return mmhash(&x, sizeof(T), 0); \
     } \
-    static inline void T##_destroy(T *x) {}
+    static inline void T##_destroy(T *x) {} \
+    static inline T T##_copy(T *x) { \
+        return *x; \
+    } \
 
 BAISC_TYPE(Int);
 BAISC_TYPE(Bool);

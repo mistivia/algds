@@ -50,6 +50,7 @@
     A##Iter A##_right(A##Iter iter) __attribute__((weak)); \
     A##Iter A##_parent(A##Iter iter) __attribute__((weak)); \
     void A##_destroy(A *self) __attribute__((weak)); \
+    A A##_copy(A *self) __attribute__((weak)); \
     \
     \
     static inline int A##_cmp(void *vlhs, void *vrhs) { \
@@ -84,6 +85,7 @@
         K##_destroy(&iter->key); \
         V##_destroy(&iter->value); \
         rb_tree_remove(&self->tree, iter); \
+        free(iter); \
     } \
     A##Iter A##_next(A *self, A##Iter iter) { \
         return rb_tree_next(&self->tree, iter); \
@@ -110,6 +112,20 @@
             i = next; \
         } \
         return destroy_rb_tree(&self->tree, NULL); \
+    } \
+    A A##_copy(A *self) { \
+        A ret = A##_create(); \
+        for (A##Iter i = A##_min(self); i != NULL;) { \
+            A##Iter next = A##_next(self, i); \
+            A##_insert(&ret, K##_copy(&i->key), V##_copy(&i->value)); \
+            i = next; \
+        } \
+        return ret; \
+    } \
+    A A##_move(A *self) { \
+        A ret = *self; \
+        self->tree.rbh_root = NULL; \
+        return ret; \
     }
 
 struct rb_node {
