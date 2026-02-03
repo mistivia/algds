@@ -26,11 +26,11 @@
     \
     static inline uint64_t A##_hash(void *vk) { \
         K *k = vk; \
-        return K##_hash(*k); \
+        return K##_hash(k); \
     } \
     static inline bool A##_eq(void *vk1, void *vk2) { \
         K *k1 = vk1, *k2 = vk2; \
-        return K##_eq(*k1, *k2); \
+        return K##_eq(k1, k2); \
     } \
     static inline void A##_init(A *self) { \
         init_hash_table(&self->ht, sizeof(A##Entry_), 16); \

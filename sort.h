@@ -19,11 +19,11 @@
         T##_qsort_swap(arr, 0, pivot); \
         int lp = 1, rp = n-1; \
         while (lp < rp) { \
-            if (T##_cmp(arr[lp], arr[0]) < 0) { \
+            if (T##_cmp(&arr[lp], &arr[0]) < 0) { \
                 lp++; \
                 continue; \
             } \
-            if (T##_cmp(arr[rp], arr[0]) >= 0) { \
+            if (T##_cmp(&arr[rp], &arr[0]) >= 0) { \
                 rp--; \
                 continue; \
             } \
@@ -31,7 +31,7 @@
             lp++; \
             rp--; \
         } \
-        if (n > 1 && T##_cmp(arr[rp], arr[0]) > 0) rp--; \
+        if (n > 1 && T##_cmp(&arr[rp], &arr[0]) > 0) rp--; \
         T##_qsort_swap(arr, 0, rp); \
         T##_qsort(arr, rp); \
         T##_qsort(arr+rp+1, n-rp-1); \

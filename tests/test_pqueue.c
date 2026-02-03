@@ -8,7 +8,7 @@
 
 typedef Int MinInt;
 
-int MinInt_cmp(Int lhs, Int rhs) {
+int MinInt_cmp(Int *lhs, Int *rhs) {
     return -Int_cmp(lhs, rhs);
 }
 void MinInt_destroy(MinInt *i) {}

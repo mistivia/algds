@@ -18,16 +18,16 @@ typedef const void *Ptr;
 
 // basic traits
 #define BAISC_TYPE(T) \
-    static inline bool T##_eq(T lhs, T rhs) { \
-        return lhs == rhs; \
+    static inline bool T##_eq(const T *lhs, const T *rhs) { \
+        return *lhs == *rhs; \
     } \
-    static inline int T##_cmp(T lhs, T rhs) { \
-        if (lhs == rhs) return 0; \
-        if (lhs < rhs) return -1; \
+    static inline int T##_cmp(T *lhs, T *rhs) { \
+        if (*lhs == *rhs) return 0; \
+        if (*lhs < *rhs) return -1; \
         return 1; \
     } \
-    static inline uint64_t T##_hash(T x) { \
-        return mmhash(&x, sizeof(T), 0); \
+    static inline uint64_t T##_hash(T *x) { \
+        return mmhash(x, sizeof(T), 0); \
     } \
     static inline void T##_destroy(T *x) {} \
     static inline T T##_copy(T *x) { \

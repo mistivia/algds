@@ -17,7 +17,7 @@
     \
     \
     static inline int A##_cmp(A *self, int a, int b) { \
-        return T##_cmp(*A##Vec__ref(&self->vec, a), *A##Vec__ref(&self->vec, b)); \
+        return T##_cmp(A##Vec__ref(&self->vec, a), A##Vec__ref(&self->vec, b)); \
     } \
     static inline void A##_init(A *self) { \
         self->vec = A##Vec__create(); \

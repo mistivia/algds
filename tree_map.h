@@ -55,7 +55,7 @@
     \
     static inline int A##_cmp(void *vlhs, void *vrhs) { \
         K *lhs = vlhs, *rhs = vrhs; \
-        return K##_cmp(*lhs, *rhs); \
+        return K##_cmp(lhs, rhs); \
     } \
     static inline void A##_init(A *self) { \
         self->tree.rbh_root = NULL; \
