@@ -150,7 +150,7 @@ static void rb_tree_insert_color(RBTree *head, RBNode *elm) {
 
 static void rb_tree_remove_color(RBTree *head, RBNode *parent,
                                  RBNode *elm) {
-    RBNode *tmp;
+    RBNode *tmp = {0};
     while ((elm == NULL || elm->entry.rbe_color == 0) &&
            elm != head->rbh_root) {
         if (parent->entry.rbe_left == elm) {
@@ -227,7 +227,7 @@ static void rb_tree_remove_color(RBTree *head, RBNode *parent,
 void rb_tree_remove(RBTree *head, void *elmv) {
     RBNode *elm = elmv;
     RBNode *child, *parent;
-    int color;
+    int color = {0};
     if (elm->entry.rbe_left == NULL)
         child = elm->entry.rbe_right;
     else if (elm->entry.rbe_right == NULL)
@@ -293,7 +293,7 @@ color:
 
 void *rb_tree_insert(RBTree *head, void *elmv) {
     RBNode *elm = elmv;
-    RBNode *tmp;
+    RBNode *tmp = {0};
     RBNode *parent = NULL;
     int comp = 0;
     tmp = head->rbh_root;
@@ -329,7 +329,7 @@ void *rb_tree_insert(RBTree *head, void *elmv) {
 
 void *rb_tree_find(RBTree *head, void *key) {
     RBNode *tmp = head->rbh_root;
-    int comp;
+    int comp = {0};
     while (tmp) {
         comp = head->cmp(key, (void *)tmp->content);
         if (comp < 0)

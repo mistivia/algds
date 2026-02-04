@@ -17,7 +17,7 @@
     A A##_create(T val) { \
         T* ptr = (T*)malloc(sizeof(T)); \
         *ptr = val; \
-        A box; \
+        A box = {0}; \
         box.ptr = ptr; \
         return box; \
     } \

@@ -28,7 +28,7 @@
         A##Ctrl* ctrl = (A##Ctrl*)malloc(sizeof(A##Ctrl)); \
         atomic_init(&ctrl->ref_count, 1); \
         ctrl->data = val; \
-        A arc; \
+        A arc = {0}; \
         arc.ptr = &ctrl->data; \
         arc.ctrl = ctrl; \
         return arc; \
@@ -36,7 +36,7 @@
     \
     A A##_copy(A *self) { \
         atomic_fetch_add_explicit(&self->ctrl->ref_count, 1, memory_order_relaxed); \
-        A arc; \
+        A arc = {0}; \
         arc.ptr = self->ptr; \
         arc.ctrl = self->ctrl; \
         return arc; \

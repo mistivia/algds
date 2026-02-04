@@ -9,7 +9,7 @@
 #include <string.h>
 
 char **str_split(char *str, char delim) {
-    char **ret;
+    char **ret = {0};
 
     if (str == NULL) return NULL;
     if (*str == '\n') {
@@ -90,7 +90,7 @@ void StrBuilder_init(StrBuilder* self) {
 }
 
 StrBuilder StrBuilder_create() {
-    StrBuilder self;
+    StrBuilder self = {0};
     StrBuilder_init(&self);
     return self;
 }
@@ -100,7 +100,7 @@ void StrBuilder_free(StrBuilder* self) {
 }
 
 StrBuilder StrBuilder_move(StrBuilder* self) {
-    StrBuilder neo;
+    StrBuilder neo = {0};
     neo.buf = self->buf;
     self->buf = NULL;
     self->cap = 0;
@@ -128,8 +128,8 @@ static void sb_reserve(str_builder_t *sb, int extra) {
 }
 
 void StrBuilder_append(StrBuilder *sb, char *format, ...) {
-    va_list va1;
-    va_list va2;
+    va_list va1 = {0};
+    va_list va2 = {0};
     va_start(va1, format);
     va_copy(va2, va1);
     int size = vsnprintf(NULL, 0, format, va1);
@@ -139,8 +139,8 @@ void StrBuilder_append(StrBuilder *sb, char *format, ...) {
 }
 
 void str_builder_append(str_builder_t *sb, char *format, ...) {
-    va_list va1;
-    va_list va2;
+    va_list va1 = {0};
+    va_list va2 = {0};
     va_start(va1, format);
     va_copy(va2, va1);
     int size = vsnprintf(NULL, 0, format, va1);
@@ -156,7 +156,7 @@ void str_builder_append_char(str_builder_t *sb, char c) {
 }
 
 char *fgetline(FILE *fp) {
-    str_builder_t sb;
+    str_builder_t sb = {0};
     init_str_builder(&sb);
     while (true) {
         int c = fgetc(fp);

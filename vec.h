@@ -27,7 +27,7 @@
     void A##_destroy(A *self)  __attribute__((weak)); \
     \
     A A##_create() { \
-        A self; \
+        A self = {0}; \
         self.buffer = (T*)malloc(sizeof(T) * 16); \
         self.cap = 16; \
         self.size = 0; \
@@ -75,7 +75,7 @@
     T* A##_last(A *self) { return self->buffer + self->size - 1; } \
     T* A##_ref(A *self, size_t n) { return self->buffer + n; } \
     void A##_swap(A *self, int i, int j) { \
-        T buf; \
+        T buf = {0}; \
         memcpy(&buf, self->buffer + i, sizeof(T)); \
         memcpy(self->buffer + i, self->buffer + j, sizeof(T)); \
         memcpy(self->buffer + j, &buf, sizeof(T)); \

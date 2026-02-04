@@ -63,7 +63,7 @@
         self->tree.augment = NULL; \
     } \
     A A##_create() { \
-        A self; \
+        A self = {0}; \
         A##_init(&self); \
         return self; \
     } \

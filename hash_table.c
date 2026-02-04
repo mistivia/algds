@@ -9,7 +9,7 @@
 
 
 static void rebuild(HashTable *ht, uint64_t (*hash)(void*), bool (*eq)(void*, void*)) {
-    HashTable newht;
+    HashTable newht = {0};
     init_hash_table(&newht, ht->elemsz, ht->size * 6);
     void *iter = hash_table_begin(ht);
     while (iter != NULL) {

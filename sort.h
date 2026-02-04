@@ -8,7 +8,7 @@
     void T##_qsort(T* arr, int n) __attribute__((weak)); \
     static inline void T##_qsort_swap(T* arr, int lhs, int rhs) { \
         if (lhs == rhs) return; \
-        T buf; \
+        T buf = {0}; \
         buf = arr[lhs]; \
         arr[lhs] = arr[rhs]; \
         arr[rhs] = buf; \
