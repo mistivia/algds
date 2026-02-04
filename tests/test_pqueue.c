@@ -13,6 +13,8 @@ int MinInt_cmp(Int *lhs, Int *rhs) {
 }
 void MinInt_destroy(MinInt *i) {}
 
+MinInt MinInt_copy(MinInt *self) { return *self; }
+
 PQUEUE(IntPQueue, Int)
 PQUEUE(MinIntPQueue, MinInt)
 

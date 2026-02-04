@@ -14,6 +14,7 @@
     T* A##_top(A *self)  __attribute__((weak)); \
     A A##_move(A *self)  __attribute__((weak)); \
     void A##_destroy(A *self)  __attribute__((weak)); \
+    A A##_copy(A *self)  __attribute__((weak)); \
     \
     \
     static inline int A##_cmp(A *self, int a, int b) { \
@@ -69,6 +70,11 @@
     } \
     void A##_destroy(A *self) { \
         A##Vec__destroy(&self->vec); \
+    } \
+    A A##_copy(A *self) { \
+        A ret = {0}; \
+        ret.vec = A##Vec__copy(&self->vec); \
+        return ret; \
     }
 
 #define PQUEUE_IMPL(T) IMPL_PQUEUE(T, T##PQueue)

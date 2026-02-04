@@ -25,6 +25,7 @@
     void A##_swap(A *self, int i, int j)  __attribute__((weak)); \
     A A##_move(A *self)  __attribute__((weak)); \
     void A##_destroy(A *self)  __attribute__((weak)); \
+    A A##_copy(A *self)  __attribute__((weak));\
     \
     A A##_create() { \
         A self = {0}; \
@@ -93,6 +94,13 @@
             T##_destroy(&self->buffer[i]); \
         } \
         free(self->buffer); \
+    } \
+    A A##_copy(A *self) {\
+        A ret = A##_create(); \
+        for (int i = 0; i < self->size; i++) { \
+            A##_push_back(&ret, T##_copy(&self->buffer[i])); \
+        } \
+        return ret; \
     }
 
 #endif
