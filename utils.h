@@ -10,8 +10,11 @@
 })
 
 #define DELETE(Type, _x) do { \
- Type##_destroy(_x); \
- free(_x); \
+    Type##_destroy(_x); \
+    free(_x); \
 } while (0);
+
+#define FOREACH(_iter, A, _a) \
+    for (A##Iter _iter = A##_begin(_a); _iter != A##_end(_a); _iter = A##_next(_a, _iter))
 
 #endif

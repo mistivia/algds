@@ -12,7 +12,7 @@
     void A##_destroy(A *self) __attribute__((weak)); \
     T* A##_get(A *self) __attribute__((weak)); \
     A A##_move(A *self) __attribute__((weak)); \
-    A A##_copy(A *self); \
+    A A##_copy(A *self); /* = delete */ \
     \
     A A##_create(T val) { \
         T* ptr = (T*)malloc(sizeof(T)); \
