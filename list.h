@@ -5,54 +5,54 @@
 #include <stdbool.h>
 
 #define LIST(A, T) \
-    typedef struct A##Node_ { \
-        T val; \
-        struct A##Node_ *prev; \
-        struct A##Node_ *next; \
-    } A##Node_; \
-    typedef A##Node_ *A##Iter; \
+    typedef struct A##_node_ { \
+        T##_t val; \
+        struct A##_node_ *prev; \
+        struct A##_node_ *next; \
+    } A##_node_; \
+    typedef A##_node_ *A##_iter_t; \
     typedef struct { \
-        A##Node_ *vhead; \
-        A##Node_ *vtail; \
+        A##_node_ *vhead; \
+        A##_node_ *vtail; \
         size_t len; \
-    } A; \
+    } A##_t; \
     \
-    void A##_init(A *self) __attribute__((weak)); \
-    A A##_create() __attribute__((weak)); \
-    void A##_destroy(A *self) __attribute__((weak)); \
-    A A##_move(A *self) __attribute__((weak)); \
-    A##Iter A##_insert_before(A *self, A##Iter iter, T val) __attribute__((weak)); \
-    A##Iter A##_insert_after(A *self, A##Iter iter, T val) __attribute__((weak)); \
-    void A##_remove(A *self, A##Iter iter) __attribute__((weak)); \
-    A##Iter A##_begin(A *self) __attribute__((weak)); \
-    A##Iter A##_last(A *self) __attribute__((weak)); \
-    A##Iter A##_end(A *self) __attribute__((weak)); \
-    A##Iter A##_next(A##Iter iter) __attribute__((weak)); \
-    A##Iter A##_prev(A##Iter iter) __attribute__((weak)); \
-    size_t A##_len(A *self) __attribute__((weak)); \
-    A##Iter A##_push_back(A *self, T val) __attribute__((weak)); \
-    A##Iter A##_push_front(A *self, T val) __attribute__((weak)); \
-    void A##_pop_back(A *self) __attribute__((weak)); \
-    void A##_pop_front(A *self) __attribute__((weak)); \
+    void A##_init(A##_t *self) __attribute__((weak)); \
+    A##_t A##_create() __attribute__((weak)); \
+    void A##_destroy(A##_t *self) __attribute__((weak)); \
+    A##_t A##_move(A##_t *self) __attribute__((weak)); \
+    A##_iter_t A##_insert_before(A##_t *self, A##_iter_t iter, T##_t val) __attribute__((weak)); \
+    A##_iter_t A##_insert_after(A##_t *self, A##_iter_t iter, T##_t val) __attribute__((weak)); \
+    void A##_remove(A##_t *self, A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_begin(A##_t *self) __attribute__((weak)); \
+    A##_iter_t A##_last(A##_t *self) __attribute__((weak)); \
+    A##_iter_t A##_end(A##_t *self) __attribute__((weak)); \
+    A##_iter_t A##_next(A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_prev(A##_iter_t iter) __attribute__((weak)); \
+    size_t A##_len(A##_t *self) __attribute__((weak)); \
+    A##_iter_t A##_push_back(A##_t *self, T##_t val) __attribute__((weak)); \
+    A##_iter_t A##_push_front(A##_t *self, T##_t val) __attribute__((weak)); \
+    void A##_pop_back(A##_t *self) __attribute__((weak)); \
+    void A##_pop_front(A##_t *self) __attribute__((weak)); \
     \
-    void A##_init(A *self) { \
-        self->vhead = malloc(sizeof(A##Node_)); \
-        self->vtail = malloc(sizeof(A##Node_)); \
+    void A##_init(A##_t *self) { \
+        self->vhead = malloc(sizeof(A##_node_)); \
+        self->vtail = malloc(sizeof(A##_node_)); \
         self->vhead->next = self->vtail; \
         self->vhead->prev = NULL; \
         self->vtail->next = NULL; \
         self->vtail->prev = self->vhead; \
         self->len = 0; \
     } \
-    A A##_create() { \
-        A self; \
+    A##_t A##_create() { \
+        A##_t self; \
         A##_init(&self); \
         return self; \
     } \
-    void A##_destroy(A *self) { \
-        A##Iter cur = self->vhead; \
+    void A##_destroy(A##_t *self) { \
+        A##_iter_t cur = self->vhead; \
         while (cur != NULL) { \
-            A##Iter next = cur->next; \
+            A##_iter_t next = cur->next; \
             if (cur != self->vhead && cur != self->vtail) { \
                 T##_destroy(&cur->val); \
             } \
@@ -63,8 +63,8 @@
         self->vtail = NULL; \
         self->len = 0; \
     } \
-    A A##_move(A *self) { \
-        A dup; \
+    A##_t A##_move(A##_t *self) { \
+        A##_t dup; \
         dup.vhead = self->vhead; \
         dup.vtail = self->vtail; \
         dup.len = self->len; \
@@ -73,9 +73,9 @@
         self->len = 0; \
         return dup; \
     } \
-    A##Iter A##_insert_before(A *self, A##Iter iter, T val) { \
+    A##_iter_t A##_insert_before(A##_t *self, A##_iter_t iter, T##_t val) { \
         if (iter->prev == NULL) return NULL; \
-        A##Iter newnode = malloc(sizeof(A##Node_)); \
+        A##_iter_t newnode = malloc(sizeof(A##_node_)); \
         newnode->prev = iter->prev; \
         newnode->next = iter; \
         newnode->val = val; \
@@ -84,9 +84,9 @@
         self->len++; \
         return newnode; \
     } \
-    A##Iter A##_insert_after(A *self, A##Iter iter, T val) { \
+    A##_iter_t A##_insert_after(A##_t *self, A##_iter_t iter, T##_t val) { \
         if (iter->next == NULL) return NULL; \
-        A##Iter newnode = malloc(sizeof(A##Node_)); \
+        A##_iter_t newnode = malloc(sizeof(A##_node_)); \
         newnode->next = iter->next; \
         newnode->prev= iter; \
         newnode->val = val; \
@@ -95,7 +95,7 @@
         self->len++; \
         return newnode; \
     } \
-    void A##_remove(A *self, A##Iter iter) { \
+    void A##_remove(A##_t *self, A##_iter_t iter) { \
         if (iter->prev == NULL || iter->next == NULL) return; \
         iter->prev->next = iter->next; \
         iter->next->prev = iter->prev; \
@@ -103,39 +103,39 @@
         free(iter); \
         self->len--; \
     } \
-    A##Iter A##_begin(A *self) { \
+    A##_iter_t A##_begin(A##_t *self) { \
         return self->vhead->next; \
     } \
-    A##Iter A##_last(A *self) { \
+    A##_iter_t A##_last(A##_t *self) { \
         if (self->vtail->prev == self->vhead) return NULL; \
         return self->vtail->prev; \
     } \
-    A##Iter A##_end(A *self) { \
+    A##_iter_t A##_end(A##_t *self) { \
         return self->vtail; \
     } \
-    A##Iter A##_next(A##Iter iter) { \
+    A##_iter_t A##_next(A##_iter_t iter) { \
         if (iter == NULL) return NULL; \
         return iter->next; \
     } \
-    A##Iter A##_prev(A##Iter iter) { \
+    A##_iter_t A##_prev(A##_iter_t iter) { \
         if (iter == NULL) return NULL; \
         if (iter->prev == NULL) return NULL; \
         if (iter->prev->prev == NULL) return NULL; \
         return iter->prev; \
     } \
-    size_t A##_len(A *self) { \
+    size_t A##_len(A##_t *self) { \
         return self->len; \
     } \
-    A##Iter A##_push_back(A *self, T val) { \
+    A##_iter_t A##_push_back(A##_t *self, T##_t val) { \
         return A##_insert_before(self, self->vtail, val); \
     } \
-    A##Iter A##_push_front(A *self, T val) { \
+    A##_iter_t A##_push_front(A##_t *self, T##_t val) { \
         return A##_insert_after(self, self->vhead, val); \
     } \
-    void A##_pop_back(A *self) { \
+    void A##_pop_back(A##_t *self) { \
         A##_remove(self, self->vtail->prev); \
     } \
-    void A##_pop_front(A *self) { \
+    void A##_pop_front(A##_t *self) { \
         A##_remove(self, self->vhead->next); \
     }
 

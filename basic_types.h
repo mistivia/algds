@@ -4,45 +4,40 @@
 #include "mmhash.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 
-typedef bool Bool;
-typedef int32_t Int;
-typedef int64_t Long;
-typedef uint32_t UInt;
-typedef uint64_t ULong;
-typedef char Char;
-typedef float Float;
-typedef double Double;
-typedef const char *String;
-typedef const void *Ptr;
+typedef bool bool_t;
+typedef char char_t;
+typedef float real32_t;
+typedef double real64_t;
+typedef void *ptr_t;
 
 // basic traits
-#define BAISC_TYPE(T) \
-    static inline bool T##_eq(const T *lhs, const T *rhs) { \
+#define BASIC_TYPE(T) \
+    static inline bool T##_eq(const T##_t *lhs, const T##_t *rhs) { \
         return *lhs == *rhs; \
     } \
-    static inline int T##_cmp(T *lhs, T *rhs) { \
+    static inline int T##_cmp(T##_t *lhs, T##_t *rhs) { \
         if (*lhs == *rhs) return 0; \
         if (*lhs < *rhs) return -1; \
         return 1; \
     } \
-    static inline uint64_t T##_hash(T *x) { \
-        return mmhash(x, sizeof(T), 0); \
+    static inline uint64_t T##_hash(T##_t *x) { \
+        return mmhash(x, sizeof(T##_t), 0); \
     } \
-    static inline void T##_destroy(T *x) {} \
-    static inline T T##_copy(T *x) { \
+    static inline void T##_destroy(T##_t *x) {} \
+    static inline T##_t T##_copy(T##_t *x) { \
         return *x; \
-    } \
+    }
 
-BAISC_TYPE(Int);
-BAISC_TYPE(Bool);
-BAISC_TYPE(Long);
-BAISC_TYPE(Char);
-BAISC_TYPE(UInt);
-BAISC_TYPE(ULong);
-BAISC_TYPE(Double);
-BAISC_TYPE(Float);
-BAISC_TYPE(Ptr);
+BASIC_TYPE(int32)
+BASIC_TYPE(int64)
+BASIC_TYPE(bool);
+BASIC_TYPE(char);
+BASIC_TYPE(uint32);
+BASIC_TYPE(uint64);
+BASIC_TYPE(real32);
+BASIC_TYPE(real64);
 
 
 #endif
