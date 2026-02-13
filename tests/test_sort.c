@@ -1,4 +1,4 @@
-#include "sort.c"
+#include "sort.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -21,7 +21,7 @@ void rand_test(int n) {
         arr2[i] = val;
     }
     qsort(arr1, n, sizeof(int), compareInts);
-    Int_qsort(arr2, n);
+    int32_qsort(arr2, n);
     for (int i = 0; i < n; i++) {
         assert(arr1[i] == arr2[i]);
     }
@@ -35,11 +35,11 @@ int main() {
 
     int arr[] = {2,4,5,7,4,6,7,8,8,5,4};
     int arrlen = sizeof(arr) / sizeof(int);
-    Int_qsort(arr, arrlen);
+    int32_qsort(arr, arrlen);
     for (int i = 0; i < arrlen - 1; i++) {
         assert(arr[i] <= arr[i+1]);
     }
-    Int_qsort(arr, arrlen);
+    int32_qsort(arr, arrlen);
     for (int i = 0; i < arrlen - 1; i++) {
         assert(arr[i] <= arr[i+1]);
     }
