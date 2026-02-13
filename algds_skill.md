@@ -79,7 +79,7 @@ void name_prefix_remove(name_prefix_t *list, name_prefix_iter_t it);
 name_prefix_iter_t name_prefix_begin(name_prefix_t *list);
 name_prefix_iter_t name_prefix_last(name_prefix_t *list);
 name_prefix_iter_t name_prefix_end(name_prefix_t *list);
-name_prefix_iter_t name_prefix_next(name_prefix_iter_t it);
+name_prefix_iter_t name_prefix_next(name_prefix_t *list, name_prefix_iter_t it);
 name_prefix_iter_t name_prefix_prev(name_prefix_iter_t it);
 int name_prefix_len(name_prefix_t *list);
 ```
@@ -271,7 +271,7 @@ int main() {
     int_list_t lst = int_list_create();
     int_list_push_back(&lst, 1);
     int_list_push_back(&lst, 2);
-    for (int_list_iter_t it = int_list_begin(&lst); it != int_list_end(&lst); it = int_list_next(it))
+    for (int_list_iter_t it = int_list_begin(&lst); it != int_list_end(&lst); it = int_list_next(&lst, it))
         printf("%d ", it->val);
     int_list_destroy(&lst);
 

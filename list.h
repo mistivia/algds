@@ -27,7 +27,7 @@
     A##_iter_t A##_begin(A##_t *self) __attribute__((weak)); \
     A##_iter_t A##_last(A##_t *self) __attribute__((weak)); \
     A##_iter_t A##_end(A##_t *self) __attribute__((weak)); \
-    A##_iter_t A##_next(A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_next(A##_t *self, A##_iter_t iter) __attribute__((weak)); \
     A##_iter_t A##_prev(A##_iter_t iter) __attribute__((weak)); \
     size_t A##_len(A##_t *self) __attribute__((weak)); \
     A##_iter_t A##_push_back(A##_t *self, T##_t val) __attribute__((weak)); \
@@ -113,7 +113,8 @@
     A##_iter_t A##_end(A##_t *self) { \
         return self->vtail; \
     } \
-    A##_iter_t A##_next(A##_iter_t iter) { \
+    A##_iter_t A##_next(A##_t *self, A##_iter_t iter) { \
+        (void)self; \
         if (iter == NULL) return NULL; \
         return iter->next; \
     } \
