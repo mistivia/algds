@@ -85,36 +85,28 @@ char *str_strip(char *str) {
     return buf;
 }
 
-void StrBuilder_init(StrBuilder* self) {
-    init_str_builder(self);
+static void str_builder_init(str_builder_t *sb) {
+    *sb = (str_builder_t){.size = 0, .cap = 16};
+    sb->buf = malloc(sizeof(char) * 17);
 }
 
-StrBuilder StrBuilder_create() {
-    StrBuilder self = {0};
-    StrBuilder_init(&self);
+str_builder_t str_builder_create() {
+    str_builder_t self = {0};
+    str_builder_init(&self);
     return self;
 }
 
-void StrBuilder_free(StrBuilder* self) {
+void str_builder_free(str_builder_t* self) {
     free(self->buf);
 }
 
-StrBuilder StrBuilder_move(StrBuilder* self) {
-    StrBuilder neo = {0};
+str_builder_t str_builder_move(str_builder_t* self) {
+    str_builder_t neo = {0};
     neo.buf = self->buf;
     self->buf = NULL;
     self->cap = 0;
     self->size = 0;
     return neo;
-}
-
-void StrBuilder_append_char(StrBuilder *sb, char c) {
-    str_builder_append_char(sb, c);
-}
-
-void init_str_builder(str_builder_t *sb) {
-    *sb = (str_builder_t){.size = 0, .cap = 16};
-    sb->buf = malloc(sizeof(char) * 17);
 }
 
 static void sb_reserve(str_builder_t *sb, int extra) {
@@ -125,17 +117,6 @@ static void sb_reserve(str_builder_t *sb, int extra) {
     sb->buf = realloc(sb->buf, new_cap + 1);
     memset(sb->buf + sb->cap, 0, new_cap - sb->cap + 1);
     sb->cap = new_cap;
-}
-
-void StrBuilder_append(StrBuilder *sb, char *format, ...) {
-    va_list va1 = {0};
-    va_list va2 = {0};
-    va_start(va1, format);
-    va_copy(va2, va1);
-    int size = vsnprintf(NULL, 0, format, va1);
-    sb_reserve(sb, size);
-    vsnprintf(sb->buf + sb->size, sb->cap - sb->size + 1, format, va2);
-    sb->size += size;
 }
 
 void str_builder_append(str_builder_t *sb, char *format, ...) {
@@ -157,7 +138,7 @@ void str_builder_append_char(str_builder_t *sb, char c) {
 
 char *fgetline(FILE *fp) {
     str_builder_t sb = {0};
-    init_str_builder(&sb);
+    str_builder_init(&sb);
     while (true) {
         int c = fgetc(fp);
         if (c == EOF && sb.size == 0) {

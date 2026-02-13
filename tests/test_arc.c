@@ -3,13 +3,13 @@
 #include "arc.h"
 
 
-/* 测试结构体类型 */
+/* Test struct type */
 typedef struct {
     int32_t x;
     int32_t y;
 } point_t;
 
-/* 实例化ARC宏 */
+/* Instantiate ARC macro */
 ARC(int_arc, int32)
 ARC(point_arc, point)
 
@@ -28,10 +28,10 @@ void test_copy_increments_count() {
     assert(*int_arc_get(&arc1) == 100);
     assert(*int_arc_get(&arc2) == 100);
     assert(atomic_load_explicit(&arc1.ctrl->ref_count, memory_order_relaxed) == 2);
-    assert(arc1.ctrl == arc2.ctrl);  // 共享同一控制块
+    assert(arc1.ctrl == arc2.ctrl);  // Share the same control block
     
     int_arc_destroy(&arc1);
-    // arc1已无效，但arc2仍应有效，引用计数为1
+    // arc1 is invalid, but arc2 should still be valid, ref count is 1
     assert(*int_arc_get(&arc2) == 100);
     assert(atomic_load_explicit(&arc2.ctrl->ref_count, memory_order_relaxed) == 1);
     
@@ -63,12 +63,12 @@ void test_struct_data() {
     assert(point_arc_get(&arc)->x == 3);
     assert(point_arc_get(&arc)->y == 4);
     
-    // 修改通过指针应影响原始数据
+    // Modification through pointer should affect original data
     point_arc_get(&arc)->x = 10;
     assert(point_arc_get(&arc)->x == 10);
     
     point_arc_t arc2 = point_arc_copy(&arc);
-    // 共享数据，修改arc2会影响arc
+    // Shared data, modifying arc2 affects arc
     point_arc_get(&arc2)->y = 20;
     assert(point_arc_get(&arc)->y == 20);
     
@@ -83,15 +83,15 @@ void test_move_semantics() {
     
     int_arc_t arc2 = int_arc_move(&arc1);
     
-    // arc1应被置空
+    // arc1 should be set to null
     assert(arc1.ptr == NULL);
     assert(arc1.ctrl == NULL);
     
-    // arc2拥有资源，引用计数不变
+    // arc2 owns the resource, ref count unchanged
     assert(*int_arc_get(&arc2) == 99);
     assert(atomic_load(&arc2.ctrl->ref_count) == 1);
     
-    // 安全销毁空arc1（不应崩溃）
+    // Safely destroy empty arc1 (should not crash)
     int_arc_destroy(&arc1);
     
     int_arc_destroy(&arc2);
@@ -101,7 +101,7 @@ void test_move_semantics() {
 void test_double_destroy_safe() {
     int_arc_t arc = int_arc_create(5);
     int_arc_destroy(&arc);
-    // 再次销毁不应崩溃（有NULL检查）
+    // Destroying again should not crash (has NULL check)
     int_arc_destroy(&arc);
     printf("test_double_destroy_safe passed\n");
 }
