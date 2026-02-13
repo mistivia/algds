@@ -6,63 +6,63 @@
 #include "hash_table.h"
 #include "basic_types.h"
 
-HASH_TABLE(Int2IntHashTable, Int, Int)
+HASH_TABLE(int32_ht, int32, int32)
 
 bool found[10000];
 
 int main() {
     printf("[TEST] htable\n");
 
-    Int2IntHashTable ht;
-    Int2IntHashTable_init(&ht);
+    int32_ht_t ht;
+    int32_ht_init(&ht);
     for (int i = 0; i < 10000; i++) {
-        Int2IntHashTable_insert(&ht, i, i*2);
-        assert(ht.ht.size == i + 1);
+        int32_ht_insert(&ht, i, i*2);
+        assert(int32_ht_len(&ht) == (size_t)(i + 1));
         assert(ht.ht.taken == i + 1);
         assert(ht.ht.cap >= i + 1);
     }
 
     for (int i = 0; i < 10000; i++) {
-        assert(Int2IntHashTable_get(&ht, i) != NULL);
-        assert(*Int2IntHashTable_get(&ht, i) == i * 2);
+        assert(int32_ht_get(&ht, i) != NULL);
+        assert(*int32_ht_get(&ht, i) == i * 2);
         int t = 10000 + i;
-        assert(Int2IntHashTable_get(&ht, t) == NULL);
+        assert(int32_ht_get(&ht, t) == NULL);
     }
 
     memset(found, 0, sizeof(bool) * 10000);
-    Int2IntHashTableIter iter = Int2IntHashTable_begin(&ht);
-    while (iter != NULL) {
+    int32_ht_iter_t iter = int32_ht_begin(&ht);
+    while (iter != int32_ht_end(&ht)) {
         found[iter->key] = true;
-        iter = Int2IntHashTable_next(&ht, iter);
+        iter = int32_ht_next(&ht, iter);
     }
     for (int i = 0; i < 10000; i++) {
         assert(found[i]);
     }
 
     for (int i = 0; i < 5000; i++) {
-        Int2IntHashTableIter iter = Int2IntHashTable_find(&ht, i);
-        Int2IntHashTable_remove(&ht, iter);
+        int32_ht_iter_t it = int32_ht_find(&ht, i);
+        int32_ht_remove(&ht, it);
     }
     for (int i = 0; i < 5000; i++) {
-        assert(Int2IntHashTable_find(&ht, i) == NULL);
+        assert(int32_ht_find(&ht, i) == int32_ht_end(&ht));
         int t = 5000 + i;
-        assert(Int2IntHashTable_find(&ht, t) != NULL);
+        assert(int32_ht_find(&ht, t) != int32_ht_end(&ht));
     }
 
     for (int i = 0; i < 5000; i++) {
-        Int2IntHashTable_insert(&ht, i, i);
+        int32_ht_insert(&ht, i, i);
     }
 
     memset(found, 0, sizeof(bool) * 10000);
-    iter = Int2IntHashTable_begin(&ht);
-    while (iter != NULL) {
+    iter = int32_ht_begin(&ht);
+    while (iter != int32_ht_end(&ht)) {
         found[iter->key] = true;
-        iter = Int2IntHashTable_next(&ht, iter);
+        iter = int32_ht_next(&ht, iter);
     }
     for (int i = 0; i < 10000; i++) {
         assert(found[i]);
     }
-    Int2IntHashTable_destroy(&ht);
+    int32_ht_destroy(&ht);
 
     printf("[PASS] htable\n");
 }

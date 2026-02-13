@@ -89,8 +89,7 @@ void test_str_strip() {
 }
 
 void test_str_bulider() {
-    str_builder_t sb;
-    init_str_builder(&sb);
+    str_builder_t sb = str_builder_create();
 
     str_builder_append(&sb, "%s", "hello");
     assert(sb.size == 5);
