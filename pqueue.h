@@ -1,42 +1,42 @@
-#ifndef PQUEUE_H_
-#define PQUEUE_H_
+#ifndef ALGDS_PQUEUE_H_
+#define ALGDS_PQUEUE_H_
 
 #include "vec.h"
 
 #define PQUEUE(A, T) \
-    VECTOR(A##Vec_, T); \
+    VECTOR(A##_vec_, T); \
     typedef struct { \
-        A##Vec_ vec; \
-    } A; \
-    A A##_create()  __attribute__((weak)); \
-    void A##_push(A *self, T elem)  __attribute__((weak)); \
-    void A##_pop(A *self)  __attribute__((weak)); \
-    T* A##_top(A *self)  __attribute__((weak)); \
-    A A##_move(A *self)  __attribute__((weak)); \
-    void A##_destroy(A *self)  __attribute__((weak)); \
-    A A##_copy(A *self)  __attribute__((weak)); \
+        A##_vec__t vec; \
+    } A##_t; \
+    void A##_init(A##_t *self) __attribute__((weak)); \
+    A##_t A##_create() __attribute__((weak)); \
+    void A##_push(A##_t *self, T##_t val) __attribute__((weak)); \
+    void A##_pop(A##_t *self) __attribute__((weak)); \
+    T##_t* A##_top(A##_t *self) __attribute__((weak)); \
+    A##_t A##_move(A##_t *self) __attribute__((weak)); \
+    void A##_destroy(A##_t *self) __attribute__((weak)); \
+    A##_t A##_copy(A##_t *self) __attribute__((weak)); \
     \
-    \
-    static inline int A##_cmp(A *self, int a, int b) { \
-        return T##_cmp(A##Vec__ref(&self->vec, a), A##Vec__ref(&self->vec, b)); \
+    static inline int A##_cmp(A##_t *self, int a, int b) { \
+        return T##_cmp(A##_vec__ref(&self->vec, a), A##_vec__ref(&self->vec, b)); \
     } \
-    static inline void A##_init(A *self) { \
-        self->vec = A##Vec__create(); \
+    void A##_init(A##_t *self) { \
+        self->vec = A##_vec__create(); \
     } \
-    A A##_create() { \
-        A self; \
+    A##_t A##_create() { \
+        A##_t self; \
         A##_init(&self); \
         return self; \
     } \
-    void A##_push(A *self, T elem) { \
-        A##Vec__push_back(&self->vec, elem); \
+    void A##_push(A##_t *self, T##_t val) { \
+        A##_vec__push_back(&self->vec, val); \
         int i = self->vec.size - 1; \
         while (i > 0 && A##_cmp(self, i, i / 2) > 0) { \
-            A##Vec__swap(&self->vec, i, i / 2); \
+            A##_vec__swap(&self->vec, i, i / 2); \
             i /= 2; \
         } \
     } \
-    static inline void A##_heapify(A *self, int idx) { \
+    static inline void A##_heapify(A##_t *self, int idx) { \
         int left, right, largest; \
         left = 2 * idx + 1; \
         right = 2 * idx + 2; \
@@ -49,34 +49,32 @@
             largest = right; \
         } \
         if (largest != idx) { \
-            A##Vec__swap(&self->vec, largest, idx); \
+            A##_vec__swap(&self->vec, largest, idx); \
             A##_heapify(self, largest); \
         } \
     } \
-    void A##_pop(A *self) { \
+    void A##_pop(A##_t *self) { \
         if (self->vec.size == 0) return; \
-        memcpy(A##Vec__ref(&self->vec, 0), A##Vec__ref(&self->vec, self->vec.size - 1), sizeof(T)); \
-        A##Vec__pop(&self->vec); \
+        memcpy(A##_vec__ref(&self->vec, 0), A##_vec__ref(&self->vec, self->vec.size - 1), sizeof(T##_t)); \
+        A##_vec__pop(&self->vec); \
         A##_heapify(self, 0); \
     } \
-    T* A##_top(A *self) { \
+    T##_t* A##_top(A##_t *self) { \
         if (self->vec.size == 0) return NULL; \
         return self->vec.buffer; \
     } \
-    A A##_move(A *self) { \
-        A dup; \
-        dup.vec = A##Vec__move(&self->vec); \
+    A##_t A##_move(A##_t *self) { \
+        A##_t dup; \
+        dup.vec = A##_vec__move(&self->vec); \
         return dup; \
     } \
-    void A##_destroy(A *self) { \
-        A##Vec__destroy(&self->vec); \
+    void A##_destroy(A##_t *self) { \
+        A##_vec__destroy(&self->vec); \
     } \
-    A A##_copy(A *self) { \
-        A ret = {0}; \
-        ret.vec = A##Vec__copy(&self->vec); \
+    A##_t A##_copy(A##_t *self) { \
+        A##_t ret = {0}; \
+        ret.vec = A##_vec__copy(&self->vec); \
         return ret; \
     }
-
-#define PQUEUE_IMPL(T) IMPL_PQUEUE(T, T##PQueue)
 
 #endif
