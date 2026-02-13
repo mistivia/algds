@@ -31,99 +31,102 @@
 #define TREE_MAP(A, K, V) \
     typedef struct { \
         RBNode rbnode; \
-        K key; \
-        V value; \
-    } A##Node; \
-    typedef A##Node *A##Iter; \
+        K##_t key; \
+        V##_t value; \
+    } A##_node_; \
+    typedef A##_node_ *A##_iter_t; \
     typedef struct { \
         RBTree tree; \
-    } A; \
-    A A##_create() __attribute__((weak)); \
-    A##Iter A##_insert(A *self, K key, V value) __attribute__((weak)); \
-    A##Iter A##_find(A *self, K key) __attribute__((weak)); \
-    V* A##_get(A *self, K key) __attribute__((weak)); \
-    A##Iter A##_next(A *self, A##Iter iter) __attribute__((weak)); \
-    A##Iter A##_min(A *self) __attribute__((weak)); \
-    A##Iter A##_max(A *self) __attribute__((weak)); \
-    void A##_remove(A *self, A##Iter iter) __attribute__((weak)); \
-    A##Iter A##_left(A##Iter iter) __attribute__((weak)); \
-    A##Iter A##_right(A##Iter iter) __attribute__((weak)); \
-    A##Iter A##_parent(A##Iter iter) __attribute__((weak)); \
-    void A##_destroy(A *self) __attribute__((weak)); \
-    A A##_copy(A *self) __attribute__((weak)); \
+    } A##_t; \
+    \
+    void A##_init(A##_t *self) __attribute__((weak)); \
+    A##_t A##_create() __attribute__((weak)); \
+    A##_iter_t A##_insert(A##_t *self, K##_t key, V##_t value) __attribute__((weak)); \
+    A##_iter_t A##_find(A##_t *self, K##_t key) __attribute__((weak)); \
+    V##_t* A##_get(A##_t *self, K##_t key) __attribute__((weak)); \
+    A##_iter_t A##_next(A##_t *self, A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_min(A##_t *self) __attribute__((weak)); \
+    A##_iter_t A##_max(A##_t *self) __attribute__((weak)); \
+    void A##_remove(A##_t *self, A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_left(A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_right(A##_iter_t iter) __attribute__((weak)); \
+    A##_iter_t A##_parent(A##_iter_t iter) __attribute__((weak)); \
+    void A##_destroy(A##_t *self) __attribute__((weak)); \
+    A##_t A##_copy(A##_t *self) __attribute__((weak)); \
+    A##_t A##_move(A##_t *self) __attribute__((weak)); \
     \
     \
     static inline int A##_cmp(void *vlhs, void *vrhs) { \
-        K *lhs = vlhs, *rhs = vrhs; \
+        K##_t *lhs = vlhs, *rhs = vrhs; \
         return K##_cmp(lhs, rhs); \
     } \
-    static inline void A##_init(A *self) { \
+    void A##_init(A##_t *self) { \
         self->tree.rbh_root = NULL; \
         self->tree.cmp = A##_cmp; \
         self->tree.augment = NULL; \
     } \
-    A A##_create() { \
-        A self = {0}; \
+    A##_t A##_create() { \
+        A##_t self = {0}; \
         A##_init(&self); \
         return self; \
     } \
-    A##Iter A##_insert(A *self, K key, V value) { \
-        A##Node *newnode = malloc(sizeof(A##Node)); \
+    A##_iter_t A##_insert(A##_t *self, K##_t key, V##_t value) { \
+        A##_node_ *newnode = malloc(sizeof(A##_node_)); \
         newnode->key = key; \
         newnode->value = value; \
         return rb_tree_insert(&self->tree, newnode); \
     } \
-    A##Iter A##_find(A *self, K key) { \
+    A##_iter_t A##_find(A##_t *self, K##_t key) { \
         return rb_tree_find(&self->tree, &key); \
     } \
-    V* A##_get(A *self, K key) { \
-        A##Iter iter = rb_tree_find(&self->tree, &key); \
+    V##_t* A##_get(A##_t *self, K##_t key) { \
+        A##_iter_t iter = rb_tree_find(&self->tree, &key); \
         if (iter == NULL) return NULL; \
         return &iter->value; \
     } \
-    void A##_remove(A *self, A##Iter iter) { \
+    void A##_remove(A##_t *self, A##_iter_t iter) { \
         K##_destroy(&iter->key); \
         V##_destroy(&iter->value); \
         rb_tree_remove(&self->tree, iter); \
         free(iter); \
     } \
-    A##Iter A##_next(A *self, A##Iter iter) { \
+    A##_iter_t A##_next(A##_t *self, A##_iter_t iter) { \
         return rb_tree_next(&self->tree, iter); \
     } \
-    A##Iter A##_min(A *self) { \
+    A##_iter_t A##_min(A##_t *self) { \
         return rb_tree_min(&self->tree); \
     } \
-    A##Iter A##_max(A *self) { \
+    A##_iter_t A##_max(A##_t *self) { \
         return rb_tree_max(&self->tree); \
     } \
-    A##Iter A##_left(A##Iter iter) { \
+    A##_iter_t A##_left(A##_iter_t iter) { \
         return rb_tree_left(iter); \
     } \
-    A##Iter A##_right(A##Iter iter) { \
+    A##_iter_t A##_right(A##_iter_t iter) { \
         return rb_tree_right(iter); \
     } \
-    A##Iter A##_parent(A##Iter iter) { \
+    A##_iter_t A##_parent(A##_iter_t iter) { \
         return rb_tree_parent(iter); \
     } \
-    void A##_destroy(A *self) { \
-        for (A##Iter i = A##_min(self); i != NULL;) { \
-            A##Iter next = A##_next(self, i); \
+    void A##_destroy(A##_t *self) { \
+        for (A##_iter_t i = A##_min(self); i != NULL;) { \
+            A##_iter_t next = A##_next(self, i); \
             A##_remove(self, i); \
             i = next; \
         } \
         return destroy_rb_tree(&self->tree, NULL); \
     } \
-    A A##_copy(A *self) { \
-        A ret = A##_create(); \
-        for (A##Iter i = A##_min(self); i != NULL;) { \
-            A##Iter next = A##_next(self, i); \
+    A##_t A##_copy(A##_t *self) { \
+        A##_t ret = A##_create(); \
+        for (A##_iter_t i = A##_min(self); i != NULL;) { \
+            A##_iter_t next = A##_next(self, i); \
             A##_insert(&ret, K##_copy(&i->key), V##_copy(&i->value)); \
             i = next; \
         } \
         return ret; \
     } \
-    A A##_move(A *self) { \
-        A ret = *self; \
+    A##_t A##_move(A##_t *self) { \
+        A##_t ret = *self; \
         self->tree.rbh_root = NULL; \
         return ret; \
     }
@@ -162,4 +165,3 @@ void destroy_rb_tree(RBTree *, void (*freeCb)(void *));
 
 
 #endif
-
