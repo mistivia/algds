@@ -5,35 +5,35 @@
 
 #define BOX(A, T) \
     typedef struct { \
-        T* ptr; \
-    } A; \
+        T##_t* ptr; \
+    } A##_t; \
     \
-    A A##_create(T val) __attribute__((weak)); \
-    void A##_destroy(A *self) __attribute__((weak)); \
-    T* A##_get(A *self) __attribute__((weak)); \
-    A A##_move(A *self) __attribute__((weak)); \
-    A A##_copy(A *self); /* = delete */ \
+    A##_t A##_create(T##_t val) __attribute__((weak)); \
+    void A##_destroy(A##_t *self) __attribute__((weak)); \
+    T##_t* A##_get(A##_t *self) __attribute__((weak)); \
+    A##_t A##_move(A##_t *self) __attribute__((weak)); \
+    A##_t A##_copy(A##_t *self); /* = delete */ \
     \
-    A A##_create(T val) { \
-        T* ptr = (T*)malloc(sizeof(T)); \
+    A##_t A##_create(T##_t val) { \
+        T##_t* ptr = (T##_t*)malloc(sizeof(T##_t)); \
         *ptr = val; \
-        A box = {0}; \
+        A##_t box = {0}; \
         box.ptr = ptr; \
         return box; \
     } \
     \
-    void A##_destroy(A *self) { \
+    void A##_destroy(A##_t *self) { \
         if (self->ptr == NULL) return; \
         free(self->ptr); \
         self->ptr = NULL; \
     } \
     \
-    T* A##_get(A *self) { \
+    T##_t* A##_get(A##_t *self) { \
         return self->ptr; \
     } \
     \
-    A A##_move(A *self) { \
-        A box = *self; \
+    A##_t A##_move(A##_t *self) { \
+        A##_t box = *self; \
         self->ptr = NULL; \
         return box; \
     }
