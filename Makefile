@@ -36,7 +36,6 @@ install: libalgds.a
 	sudo cp *.h /usr/local/include/algds
 	sudo cp libalgds.a /usr/local/lib
 	sudo mkdir -p /usr/local/share/algds
-	sudo cp docs/usage.md /usr/local/share/algds/
 
 test: $(tests_bin)
 	@echo
