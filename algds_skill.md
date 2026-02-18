@@ -30,6 +30,7 @@ Type_t   Type_copy(Type_t *x);             // 深拷贝
 
 **基础类型**（int32/int64/uint32/uint64/bool/char/real32/real64）已在 `basic_types.h` 预定义。
 
+str_t类型（本质上是const char *）。str_t类型destroy会free。如果要放入容器必须str_copy一份。
 
 ---
 
