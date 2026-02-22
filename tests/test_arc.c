@@ -14,7 +14,9 @@ ARC(int_arc, int32)
 ARC(point_arc, point)
 
 void test_basic_create_destroy() {
-    int_arc_t arc = int_arc_create(42);
+    int32_t* val = malloc(sizeof(int32_t));
+    *val = 42;
+    int_arc_t arc = int_arc_create(val);
     assert(*int_arc_get(&arc) == 42);
     assert(atomic_load_explicit(&arc.ctrl->ref_count, memory_order_relaxed) == 1);
     int_arc_destroy(&arc);
@@ -22,7 +24,9 @@ void test_basic_create_destroy() {
 }
 
 void test_copy_increments_count() {
-    int_arc_t arc1 = int_arc_create(100);
+    int32_t* val = malloc(sizeof(int32_t));
+    *val = 100;
+    int_arc_t arc1 = int_arc_create(val);
     int_arc_t arc2 = int_arc_copy(&arc1);
     
     assert(*int_arc_get(&arc1) == 100);
@@ -40,7 +44,9 @@ void test_copy_increments_count() {
 }
 
 void test_multiple_copies() {
-    int_arc_t arc1 = int_arc_create(10);
+    int32_t* val = malloc(sizeof(int32_t));
+    *val = 10;
+    int_arc_t arc1 = int_arc_create(val);
     int_arc_t arc2 = int_arc_copy(&arc1);
     int_arc_t arc3 = int_arc_copy(&arc2);
     
@@ -57,7 +63,9 @@ void test_multiple_copies() {
 }
 
 void test_struct_data() {
-    point_t p = {3, 4};
+    point_t* p = malloc(sizeof(point_t));
+    p->x = 3;
+    p->y = 4;
     point_arc_t arc = point_arc_create(p);
     
     assert(point_arc_get(&arc)->x == 3);
@@ -78,7 +86,9 @@ void test_struct_data() {
 }
 
 void test_move_semantics() {
-    int_arc_t arc1 = int_arc_create(99);
+    int32_t* val = malloc(sizeof(int32_t));
+    *val = 99;
+    int_arc_t arc1 = int_arc_create(val);
     assert(atomic_load(&arc1.ctrl->ref_count) == 1);
     
     int_arc_t arc2 = int_arc_move(&arc1);
@@ -99,7 +109,9 @@ void test_move_semantics() {
 }
 
 void test_double_destroy_safe() {
-    int_arc_t arc = int_arc_create(5);
+    int32_t* val = malloc(sizeof(int32_t));
+    *val = 5;
+    int_arc_t arc = int_arc_create(val);
     int_arc_destroy(&arc);
     // Destroying again should not crash (has NULL check)
     int_arc_destroy(&arc);
