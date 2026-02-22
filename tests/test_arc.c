@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include "basic_types.h"
 #include "arc.h"
 
 
@@ -8,6 +9,7 @@ typedef struct {
     int32_t x;
     int32_t y;
 } point_t;
+void point_destroy(point_t *self) {}
 
 /* Instantiate ARC macro */
 ARC(int_arc, int32)

@@ -28,6 +28,12 @@ typedef void *ptr_t;
         return mmhash(x, sizeof(T##_t), 0); \
     } \
     static inline void T##_destroy(T##_t *x) {} \
+    static inline void T##_delete(T##_t *x) {free(x);} \
+    static inline T##_t* T##_new(T##_t x) { \
+        T##_t *ptr = malloc(sizeof(T##_t)); \
+        *ptr = x; \
+        return ptr; \
+    } \
     static inline T##_t T##_copy(T##_t *x) { \
         return *x; \
     }

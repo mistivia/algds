@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
+#include "basic_types.h"
 #include "box.h"
 
 /* Test Box with int32 type */
@@ -11,18 +12,19 @@ typedef struct {
     int x;
     int y;
 } point_t;
+void point_destroy(point_t *self) {}
 
 BOX(point_box, point)
 
 void test_basic_create_destroy() {
-    int32_box_t box = int32_box_create(42);
+    int32_box_t box = int32_box_create(int32_new(42));
     assert(*int32_box_get(&box) == 42);
     int32_box_destroy(&box);
     printf("test_basic_create_destroy passed\n");
 }
 
 void test_move_semantics() {
-    int32_box_t box1 = int32_box_create(100);
+    int32_box_t box1 = int32_box_create(int32_new(100));
     assert(*int32_box_get(&box1) == 100);
     
     // Move box1 to box2
@@ -43,7 +45,7 @@ void test_move_semantics() {
 }
 
 void test_double_destroy_safe() {
-    int32_box_t box = int32_box_create(5);
+    int32_box_t box = int32_box_create(int32_new(5));
     int32_box_destroy(&box);
     // Second destroy should not crash (NULL check)
     int32_box_destroy(&box);
@@ -51,7 +53,8 @@ void test_double_destroy_safe() {
 }
 
 void test_struct_data() {
-    point_t p = {3, 4};
+    point_t *p = malloc(sizeof(point_t));
+    *p = (point_t){3, 4};
     point_box_t box = point_box_create(p);
     
     assert(point_box_get(&box)->x == 3);
@@ -66,7 +69,7 @@ void test_struct_data() {
 }
 
 void test_null_get() {
-    int32_box_t box = int32_box_create(99);
+    int32_box_t box = int32_box_create(int32_new(99));
     int32_box_t box2 = int32_box_move(&box);
     
     // box is now empty, get should return NULL

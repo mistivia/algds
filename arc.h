@@ -40,6 +40,7 @@
     void A##_destroy(A##_t *self) { \
         if (self->ctrl == NULL) return; \
         if (atomic_fetch_sub_explicit(&self->ctrl->ref_count, 1, memory_order_acq_rel) == 1) { \
+            T##_destroy(self->ptr); \
             free(self->ptr); \
             free(self->ctrl); \
         } \
