@@ -148,6 +148,7 @@
         A##_node__t *iter_node = A##_node_vec_ref(&self->nodes, iter); \
         if (iter_node->prev < 0) return -1; \
         int new_idx = A##_alloc_node(self); \
+        iter_node = A##_node_vec_ref(&self->nodes, iter); \
         if (new_idx < 0) return -1; \
         A##_node__t *new_node = A##_node_vec_ref(&self->nodes, new_idx); \
         new_node->val = val; \
@@ -165,6 +166,7 @@
         A##_node__t *iter_node = A##_node_vec_ref(&self->nodes, iter); \
         if (iter_node->next < 0) return -1; \
         int new_idx = A##_alloc_node(self); \
+        iter_node = A##_node_vec_ref(&self->nodes, iter); \
         if (new_idx < 0) return -1; \
         A##_node__t *new_node = A##_node_vec_ref(&self->nodes, new_idx); \
         new_node->val = val; \
