@@ -9,3 +9,4 @@ build/
 doing/
 .cache/
 compile_commands.json
+.roo

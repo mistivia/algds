@@ -1,4 +1,4 @@
-#include "mmhash.h"
+#include "utils.h"
 
 /*-----------------------------------------------------------------------------
 // MurmurHash2, 64-bit versions, by Austin Appleby

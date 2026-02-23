@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "mmhash.h"
+#include "utils.h"
 
 int main() {
     printf("[TEST] hash\n");

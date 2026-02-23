@@ -1,7 +1,7 @@
 #ifndef ALGDS_BAISC_TRAITS_H_
 #define ALGDS_BAISC_TRAITS_H_
 
-#include "mmhash.h"
+#include "utils.h"
 
 #include <stdbool.h>
 #include <stdint.h>
