@@ -3,8 +3,10 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 FLAT_LIST(int32_list, int32)
+FLAT_LIST(str_list, str)
 
 int main(void) {
     printf("[TEST] flat_list\n");
@@ -88,6 +90,66 @@ int main(void) {
     assert(expected == 5);
 
     int32_list_destroy(&lst2);
+
+    str_list_t s_lst = str_list_create();
+
+    // Test push_back and push_front with strings
+    str_list_push_back(&s_lst, strdup("world"));
+    str_list_push_front(&s_lst, strdup("hello"));
+
+    // Verify structure
+    assert(strcmp(*str_list_front(&s_lst), "hello") == 0);
+    assert(strcmp(*str_list_back(&s_lst), "world") == 0);
+    assert(str_list_len(&s_lst) == 2);
+
+    // Test insert_after - insert "beautiful" after "hello"
+    str_list_insert_after(&s_lst, str_list_begin(&s_lst), strdup("beautiful"));
+    assert(str_list_len(&s_lst) == 3);
+
+    // Verify order: hello -> beautiful -> world
+    str_list_iter_t it = str_list_begin(&s_lst);
+    assert(strcmp(*str_list_get(&s_lst, it), "hello") == 0);
+    it = str_list_next(&s_lst, it);
+    assert(strcmp(*str_list_get(&s_lst, it), "beautiful") == 0);
+    it = str_list_next(&s_lst, it);
+    assert(strcmp(*str_list_get(&s_lst, it), "world") == 0);
+
+    // Test insert_before
+    it = str_list_last(&s_lst);
+    str_list_insert_before(&s_lst, it, strdup("cruel"));
+    assert(str_list_len(&s_lst) == 4);
+
+    // Verify order: hello -> beautiful -> cruel -> world
+    it = str_list_begin(&s_lst);
+    assert(strcmp(*str_list_get(&s_lst, it), "hello") == 0);
+    it = str_list_next(&s_lst, it);
+    assert(strcmp(*str_list_get(&s_lst, it), "beautiful") == 0);
+    it = str_list_next(&s_lst, it);
+    assert(strcmp(*str_list_get(&s_lst, it), "cruel") == 0);
+    it = str_list_next(&s_lst, it);
+    assert(strcmp(*str_list_get(&s_lst, it), "world") == 0);
+
+    // Test pop_front
+    str_list_pop_front(&s_lst);
+    assert(str_list_len(&s_lst) == 3);
+    assert(strcmp(*str_list_front(&s_lst), "beautiful") == 0);
+
+    // Test pop_back
+    str_list_pop_back(&s_lst);
+    assert(str_list_len(&s_lst) == 2);
+    assert(strcmp(*str_list_back(&s_lst), "cruel") == 0);
+
+    // Test iteration over remaining elements
+    char *expected_strs[] = {"beautiful", "cruel"};
+    int idx = 0;
+    for (str_list_iter_t iter = str_list_begin(&s_lst); iter != str_list_end(&s_lst); iter = str_list_next(&s_lst, iter)) {
+        assert(strcmp(*str_list_get(&s_lst, iter), expected_strs[idx]) == 0);
+        idx++;
+    }
+    assert(idx == 2);
+
+    // Cleanup (str_list_destroy will call str_destroy on each element)
+    str_list_destroy(&s_lst);
 
     printf("[PASS] flat_list\n");
     return 0;

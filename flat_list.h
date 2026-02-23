@@ -10,11 +10,15 @@
         T##_t val; \
         int prev; \
         int next; \
+        bool initialized; \
     } A##_node__t; \
     \
     /* Define destroy and copy functions for the node type */ \
     static inline void A##_node__destroy(A##_node__t *self) { \
-        T##_destroy(&self->val); \
+        if (self->initialized) { \
+            T##_destroy(&self->val); \
+            self->initialized = false; \
+        } \
     } \
     \
     static inline A##_node__t A##_node__copy(A##_node__t *self) { \
@@ -22,6 +26,7 @@
         ret.val = T##_copy(&self->val); \
         ret.prev = self->prev; \
         ret.next = self->next; \
+        ret.initialized = self->initialized; \
         return ret; \
     } \
     \
@@ -64,7 +69,7 @@
             int old_size = self->nodes.size; \
             int new_size = old_size + 16; \
             for (int i = old_size; i < new_size; i++) { \
-                A##_node__t free_node = { .prev = -1, .next = i + 1 }; \
+                A##_node__t free_node = { .prev = -1, .next = i + 1, .initialized = false }; \
                 A##_node_vec_push_back(&self->nodes, free_node); \
             } \
             A##_node_vec_ref(&self->nodes, new_size - 1)->next = self->free_head; \
@@ -75,6 +80,7 @@
         self->free_head = node->next; \
         node->prev = -1; \
         node->next = -1; \
+        node->initialized = false; \
         return idx; \
     } \
     \
@@ -83,6 +89,7 @@
         A##_node__t *node = A##_node_vec_ref(&self->nodes, idx); \
         node->next = self->free_head; \
         node->prev = -1; \
+        node->initialized = false; \
         self->free_head = idx; \
     } \
     \
@@ -93,13 +100,13 @@
         self->vhead = 0; \
         self->vtail = 1; \
         /* Add sentinel nodes */ \
-        A##_node__t head_node = { .prev = -1, .next = 1 }; \
+        A##_node__t head_node = { .prev = -1, .next = 1, .initialized = false }; \
         A##_node_vec_push_back(&self->nodes, head_node); \
-        A##_node__t tail_node = { .prev = 0, .next = -1 }; \
+        A##_node__t tail_node = { .prev = 0, .next = -1, .initialized = false }; \
         A##_node_vec_push_back(&self->nodes, tail_node); \
         /* Initialize free list with some initial capacity */ \
         for (int i = 2; i < 16; i++) { \
-            A##_node__t free_node = { .prev = -1, .next = i + 1 }; \
+            A##_node__t free_node = { .prev = -1, .next = i + 1, .initialized = false }; \
             A##_node_vec_push_back(&self->nodes, free_node); \
         } \
         if (self->nodes.size > 2) { \
@@ -115,24 +122,6 @@
     \
     void A##_destroy(A##_t *self) { \
         if (self->nodes.buffer == NULL) return; \
-        for (int i = 2; i < self->nodes.size; i++) { \
-            /* Only destroy values that are not in the free list */ \
-            bool is_free = false; \
-            int free_cur = self->free_head; \
-            while (free_cur != -1 && free_cur < self->nodes.size) { \
-                if (free_cur == i) { \
-                    is_free = true; \
-                    break; \
-                } \
-                free_cur = A##_node_vec_ref(&self->nodes, free_cur)->next; \
-            } \
-            if (!is_free) { \
-                A##_node__t *node = A##_node_vec_ref(&self->nodes, i); \
-                if (node->prev >= 0 && node->next >= 0) { \
-                    T##_destroy(&node->val); \
-                } \
-            } \
-        } \
         A##_node_vec_destroy(&self->nodes); \
         self->len = 0; \
         self->free_head = -1; \
@@ -162,6 +151,7 @@
         if (new_idx < 0) return -1; \
         A##_node__t *new_node = A##_node_vec_ref(&self->nodes, new_idx); \
         new_node->val = val; \
+        new_node->initialized = true; \
         new_node->prev = iter_node->prev; \
         new_node->next = iter; \
         A##_node_vec_ref(&self->nodes, iter_node->prev)->next = new_idx; \
@@ -178,6 +168,7 @@
         if (new_idx < 0) return -1; \
         A##_node__t *new_node = A##_node_vec_ref(&self->nodes, new_idx); \
         new_node->val = val; \
+        new_node->initialized = true; \
         new_node->next = iter_node->next; \
         new_node->prev = iter; \
         A##_node_vec_ref(&self->nodes, iter_node->next)->prev = new_idx; \

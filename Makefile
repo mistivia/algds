@@ -14,6 +14,10 @@ common_cflags = -Wall -Wno-sign-conversion -Wno-conversion -Wformat -Wformat=2 \
 cc = gcc
 ifeq ($(mode), debug)
 	cflags = $(common_cflags) -g -Werror
+else ifeq ($(mode), asan)
+	cflags = $(common_cflags) -g -O0 \
+		-fsanitize=address,leak,undefined \
+		-fno-omit-frame-pointer
 else
 	cflags = $(common_cflags) -O2 \
 		-fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -ftrivial-auto-var-init=zero \
