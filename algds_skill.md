@@ -95,6 +95,40 @@ for (it = list_begin(&lst), next; it != list_end(&lst); it = next) {
 
 ---
 
+### Flat List (基于数组的双向链表) - flat_list.h
+
+```c
+FLAT_LIST(name_prefix, element_type)  // 定义
+
+name_prefix_t name_prefix_create(void);
+void name_prefix_destroy(name_prefix_t *list);
+name_prefix_iter_t name_prefix_push_back(name_prefix_t *list, element_type elem);
+name_prefix_iter_t name_prefix_push_front(name_prefix_t *list, element_type elem);
+void name_prefix_pop_back(name_prefix_t *list);
+void name_prefix_pop_front(name_prefix_t *list);
+name_prefix_iter_t name_prefix_insert_before(name_prefix_t *list, name_prefix_iter_t it, element_type elem);
+name_prefix_iter_t name_prefix_insert_after(name_prefix_t *list, name_prefix_iter_t it, element_type elem);
+void name_prefix_remove(name_prefix_t *list, name_prefix_iter_t it);
+name_prefix_iter_t name_prefix_begin(name_prefix_t *list);
+name_prefix_iter_t name_prefix_last(name_prefix_t *list);
+name_prefix_iter_t name_prefix_end(name_prefix_t *list);
+name_prefix_iter_t name_prefix_next(name_prefix_t *list, name_prefix_iter_t it);
+name_prefix_iter_t name_prefix_prev(name_prefix_iter_t it);
+element_type_t *name_prefix_get(name_prefix_t *list, name_prefix_iter_t it);
+element_type_t *name_prefix_front(name_prefix_t *list);
+element_type_t *name_prefix_back(name_prefix_t *list);
+int name_prefix_len(name_prefix_t *list);
+```
+
+**特性：**
+- 使用数组存储节点，通过索引链接而非指针
+- 迭代器是整数索引，不因扩容而失效
+- 有独立的空闲列表管理回收节点
+
+**迭代器访问：** `name_prefix_get(&list, it)`
+
+---
+
 ### Hash Table (哈希表) - hash_table.h
 
 ```c
@@ -231,6 +265,18 @@ int fpeek(FILE *fp);
 
 ---
 
+### 工具函数 - utils.h
+
+```c
+// MurmurHash哈希函数
+uint64_t mmhash(const void *key, int len, uint64_t seed);
+
+// 零初始化malloc
+void *mallocz(size_t sz);  // malloc + memset(0)
+```
+
+---
+
 ## 常见陷阱
 
 | 问题 | 说明 | 解决 |
@@ -251,12 +297,14 @@ int fpeek(FILE *fp);
 #include "basic_types.h"
 #include "vec.h"
 #include "list.h"
+#include "flat_list.h"
 #include "hash_table.h"
 #include "pqueue.h"
 #include "sort.h"
 
 VECTOR(int_vec, int32)
 LIST(int_list, int32)
+FLAT_LIST(int_flist, int32)
 HASH_TABLE(int_map, int32, int32)
 PQUEUE(int_pq, int32)
 
@@ -275,6 +323,14 @@ int main() {
     for (int_list_iter_t it = int_list_begin(&lst); it != int_list_end(&lst); it = int_list_next(&lst, it))
         printf("%d ", it->val);
     int_list_destroy(&lst);
+
+    // Flat List
+    int_flist_t flst = int_flist_create();
+    int_flist_push_back(&flst, 1);
+    int_flist_push_back(&flst, 2);
+    for (int_flist_iter_t it = int_flist_begin(&flst); it != int_flist_end(&flst); it = int_flist_next(&flst, it))
+        printf("%d ", *int_flist_get(&flst, it));
+    int_flist_destroy(&flst);
 
     // Hash Table
     int_map_t ht = int_map_create();
